@@ -54,8 +54,8 @@ public class SecurityConfig {
     public CorsConfigurationSource configurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        // config.setAllowedOrigins(List.of("https://www.pyomin.com"));
-        config.setAllowedOrigins(List.of("http://localhost:8897"));
+        config.setAllowedOrigins(List.of("https://www.pyomin.com"));
+        // config.setAllowedOrigins(List.of("http://localhost:8897"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
 
