@@ -1,5 +1,6 @@
 package com.pyomin.cool.auth;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,9 @@ public class AuthController {
 
     private final AuthService authService;
 
+    @Value("${cookie.secure}")
+    private boolean isSecure;
+
     @PostMapping("/login")
     public ResponseEntity<Void> login(@RequestBody LoginRequest request, HttpServletResponse response) {
 
@@ -26,7 +30,7 @@ public class AuthController {
 
         ResponseCookie cookie = ResponseCookie.from("token", token)
                 .httpOnly(true)
-                .secure(true)
+                .secure(isSecure)
                 .sameSite("None")
                 .path("/")
                 .maxAge(60 * 60)
