@@ -28,3 +28,6 @@ jwt:
 admin:
   username: ${ADMIN_USERNAME}
   password: ${ADMIN_PASSWORD}
+
+cookie:
+  secure: true
