@@ -22,8 +22,7 @@ public class UserPostServiceImpl implements UserPostService {
 
     @Override
     public List<PostListResponse> getAllPosts() {
-        return postRepository.findAll().stream()
-                .filter(post -> post.isPublic() && !post.isDeleted())
+        return postRepository.findVisiblePosts().stream()
                 .map(post -> {
                     return PostListDto.of(post, summarize(post.getContent()));
                 })
