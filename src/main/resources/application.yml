@@ -3,7 +3,10 @@ server:
 
 spring:
   application:
-    name: cool  
+    name: cool
+
+  profiles:
+    active: dev
 
   datasource:
     url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
@@ -28,3 +31,12 @@ admin:
 
 cookie:
   secure: true
+
+file:
+  upload-dir: ${UPLOAD_DIR}
+
+cors:
+  allowed-origins: ${ALLOWED_ORIGINS}
+
+app:
+  file-url-prefix: ${FILE_URL_PREFIX}
