@@ -2,13 +2,13 @@ package com.pyomin.cool.auth;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pyomin.cool.dto.admin.request.LoginRequest;
+import com.pyomin.cool.dto.admin.response.LoginResponse;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class AuthController {
     private boolean isSecure;
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody LoginRequest request, HttpServletResponse response) {
+    public LoginResponse login(@RequestBody LoginRequest request, HttpServletResponse response) {
 
         String token = authService.login(request);
 
@@ -37,7 +37,7 @@ public class AuthController {
                 .build();
 
         response.setHeader("Set-Cookie", cookie.toString());
-        return ResponseEntity.ok().build();
+        return new LoginResponse(token);
     }
 
 }
