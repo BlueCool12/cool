@@ -10,6 +10,9 @@ import com.pyomin.cool.domain.Post;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
+    @Query("SELECT p FROM Post p ORDER BY p.createdAt DESC")
+    List<Post> findAllPosts();
+
     @Query("SELECT p FROM Post p WHERE p.isPublic = true AND p.isDeleted = false ORDER BY p.createdAt DESC")
     List<Post> findVisiblePosts();
 

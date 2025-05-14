@@ -8,8 +8,6 @@ import org.springframework.stereotype.Service;
 import com.pyomin.cool.domain.Post;
 import com.pyomin.cool.dto.user.PostDetailDto;
 import com.pyomin.cool.dto.user.PostListDto;
-import com.pyomin.cool.dto.user.response.PostDetailResponse;
-import com.pyomin.cool.dto.user.response.PostListResponse;
 import com.pyomin.cool.repository.PostRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -21,12 +19,11 @@ public class UserPostServiceImpl implements UserPostService {
     private final PostRepository postRepository;
 
     @Override
-    public List<PostListResponse> getAllPosts() {
+    public List<PostListDto> getAllPosts() {
         return postRepository.findVisiblePosts().stream()
                 .map(post -> {
                     return PostListDto.of(post, summarize(post.getContent()));
-                })
-                .map(PostListResponse::from)
+                })                
                 .collect(Collectors.toList());
     }
 
@@ -37,12 +34,10 @@ public class UserPostServiceImpl implements UserPostService {
     }
 
     @Override
-    public PostDetailResponse getPostBySlug(String slug) {
+    public PostDetailDto getPostBySlug(String slug) {
         Post post = postRepository.findBySlug(slug)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 
-        PostDetailDto dto = PostDetailDto.from(post);
-
-        return PostDetailResponse.from(dto);
+        return PostDetailDto.from(post);        
     }
 }
