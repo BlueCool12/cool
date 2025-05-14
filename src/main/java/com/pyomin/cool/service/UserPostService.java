@@ -2,11 +2,11 @@ package com.pyomin.cool.service;
 
 import java.util.List;
 
-import com.pyomin.cool.dto.user.response.PostDetailResponse;
-import com.pyomin.cool.dto.user.response.PostListResponse;
+import com.pyomin.cool.dto.user.PostDetailDto;
+import com.pyomin.cool.dto.user.PostListDto;
 
 public interface UserPostService {
-    List<PostListResponse> getAllPosts();
+    List<PostListDto> getAllPosts();
 
-    PostDetailResponse getPostBySlug(String slug);
+    PostDetailDto getPostBySlug(String slug);
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.pyomin.cool.domain.Post;
 import com.pyomin.cool.domain.PostImage;
 import com.pyomin.cool.dto.admin.PostCreateDto;
+import com.pyomin.cool.dto.admin.PostListDto;
 import com.pyomin.cool.repository.PostImageRepository;
 import com.pyomin.cool.repository.PostRepository;
 
@@ -27,6 +29,13 @@ public class AdminPostServiceImpl implements AdminPostService {
 
     @Value("${app.file-url-prefix}")
     private String fileUrlPrefix;
+
+    @Override
+    public List<PostListDto> getAllPosts() {
+        return postRepository.findAllPosts().stream()
+                .map(PostListDto::from)
+                .collect(Collectors.toList());
+    }
 
     @Override
     @Transactional
