@@ -7,7 +7,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,8 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.pyomin.cool.dto.admin.PostCreateDto;
+import com.pyomin.cool.dto.admin.PostDetailDto;
+import com.pyomin.cool.dto.admin.PostUpdateDto;
 import com.pyomin.cool.dto.admin.request.PostCreateRequest;
+import com.pyomin.cool.dto.admin.request.PostUpdateRequest;
 import com.pyomin.cool.dto.admin.response.PostCreateResponse;
+import com.pyomin.cool.dto.admin.response.PostDetailResponse;
 import com.pyomin.cool.dto.admin.response.PostImageUploadResponse;
 import com.pyomin.cool.dto.admin.response.PostListResponse;
 import com.pyomin.cool.service.AdminPostService;
@@ -42,6 +48,18 @@ public class AdminPostController {
         return postService.getAllPosts().stream()
                 .map(PostListResponse::from)
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/{id}")
+    public PostDetailResponse getPost(@PathVariable("id") Long id) {
+        PostDetailDto postDetailDto = postService.getPost(id);
+        return PostDetailResponse.from(postDetailDto);
+    }
+
+    @PutMapping("/{id}")
+    public void updatePost(@PathVariable("id") Long id, @Valid @RequestBody PostUpdateRequest request) {
+        PostUpdateDto updateDto = PostUpdateDto.from(request);        
+        postService.updatePost(id, updateDto);
     }
 
     @PostMapping
