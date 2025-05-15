@@ -13,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.pyomin.cool.domain.Post;
 import com.pyomin.cool.domain.PostImage;
 import com.pyomin.cool.dto.admin.PostCreateDto;
+import com.pyomin.cool.dto.admin.PostDetailDto;
 import com.pyomin.cool.dto.admin.PostListDto;
+import com.pyomin.cool.dto.admin.PostUpdateDto;
 import com.pyomin.cool.repository.PostImageRepository;
 import com.pyomin.cool.repository.PostRepository;
 
@@ -38,6 +40,14 @@ public class AdminPostServiceImpl implements AdminPostService {
     }
 
     @Override
+    public PostDetailDto getPost(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+
+        return PostDetailDto.of(post);
+    }
+
+    @Override
     @Transactional
     public Long createPost(PostCreateDto postCreateDto) {
         String slug = generateSlug(postCreateDto.getTitle());
@@ -48,6 +58,16 @@ public class AdminPostServiceImpl implements AdminPostService {
         imagePaths.forEach(path -> connectImageToPost(savedPost.getId(), path));
 
         return savedPost.getId();
+    }
+
+    @Override
+    @Transactional
+    public void updatePost(Long id, PostUpdateDto postUpdateDto) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+
+        post.update(postUpdateDto.getTitle(), postUpdateDto.getContent(), postUpdateDto.getCategory(),
+                postUpdateDto.isPublic());
     }
 
     private String generateSlug(String title) {
