@@ -1,7 +1,13 @@
 package com.pyomin.cool.auth;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +44,21 @@ public class AuthController {
 
         response.setHeader("Set-Cookie", cookie.toString());
         return new LoginResponse(token);
+    }
+
+    @GetMapping("/me")
+    public AdminInfoResponse getCurrentAdmin(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()
+                || authentication instanceof AnonymousAuthenticationToken) {
+            throw new RuntimeException("인증 실패!!");
+        }
+
+        String username = authentication.getName();
+        List<String> roles = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+
+        return new AdminInfoResponse(username, roles);
     }
 
 }

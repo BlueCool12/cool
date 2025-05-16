@@ -58,6 +58,7 @@ public class AdminPostController {
 
     @PutMapping("/{id}")
     public void updatePost(@PathVariable("id") Long id, @Valid @RequestBody PostUpdateRequest request) {
+        System.out.println(request.isPublic());
         PostUpdateDto updateDto = PostUpdateDto.from(request);        
         postService.updatePost(id, updateDto);
     }
