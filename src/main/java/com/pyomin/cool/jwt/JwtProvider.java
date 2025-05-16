@@ -14,10 +14,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -49,16 +51,20 @@ public class JwtProvider {
                 .compact();
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token) {        
         try {
             Jwts.parserBuilder()
                     .setSigningKey(key).build()
                     .parseClaimsJws(token);
             return true;
+        } catch (ExpiredJwtException e) {
+            log.warn("토큰 만료됨: {}", e.getMessage());            
+        } catch (SignatureException e) {
+            log.warn("🔐 서명 오류: {}", e.getMessage());            
         } catch (JwtException e) {
-            log.warn("유효하지 않은 JWT 토큰입니다: {}", e.getMessage());
-            return false;
-        }
+            log.warn("유효하지 않은 JWT 토큰입니다: {}", e.getMessage());            
+        }        
+        return false;
     }
 
     public Authentication getAuthentication(String token) {
@@ -71,6 +77,7 @@ public class JwtProvider {
                 .map(role -> new SimpleGrantedAuthority((String) role))
                 .collect(Collectors.toList());
 
-        return new UsernamePasswordAuthenticationToken(username, "", authorities);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(username, "", authorities);        
+        return authentication;
     }
 }
