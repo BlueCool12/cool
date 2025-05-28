@@ -62,7 +62,7 @@ public class AdminPostServiceImpl implements AdminPostService {
 
     @Override
     @Transactional
-    public void updatePost(Long id, PostUpdateDto postUpdateDto) {
+    public void updatePost(Long id, PostUpdateDto postUpdateDto) {        
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
 
@@ -73,7 +73,8 @@ public class AdminPostServiceImpl implements AdminPostService {
     private String generateSlug(String title) {
         return title.toLowerCase()
                 .replaceAll("[^a-z0-9가-힣\\s]", "")
-                .replaceAll("\\s+", "-");
+                .replaceAll("\\s+", "-")
+                .toLowerCase();
     }
 
     private List<String> extractImagePaths(String content) {
