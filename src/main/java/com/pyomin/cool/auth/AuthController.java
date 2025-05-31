@@ -29,6 +29,9 @@ public class AuthController {
     @Value("${cookie.secure}")
     private boolean isSecure;
 
+    @Value("${auth.cookie-domain}")
+    private String cookieDomain;
+
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest request, HttpServletResponse response) {
 
@@ -38,6 +41,7 @@ public class AuthController {
                 .httpOnly(true)
                 .secure(isSecure)
                 .sameSite(isSecure ? "None" : "Lax")
+                .domain(cookieDomain)
                 .path("/")
                 .maxAge(60 * 60)
                 .build();
