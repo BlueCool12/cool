@@ -11,12 +11,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.pyomin.cool.domain.Post;
-import com.pyomin.cool.domain.PostImage;
+import com.pyomin.cool.domain.Category;
+import com.pyomin.cool.domain.Image;
 import com.pyomin.cool.dto.admin.PostCreateDto;
 import com.pyomin.cool.dto.admin.PostDetailDto;
 import com.pyomin.cool.dto.admin.PostListDto;
 import com.pyomin.cool.dto.admin.PostUpdateDto;
-import com.pyomin.cool.repository.PostImageRepository;
+import com.pyomin.cool.repository.CategoryRepository;
+import com.pyomin.cool.repository.ImageRepository;
 import com.pyomin.cool.repository.PostRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -27,7 +29,9 @@ public class AdminPostServiceImpl implements AdminPostService {
 
     private final PostRepository postRepository;
 
-    private final PostImageRepository postImageRepository;
+    private final CategoryRepository categoryRepository;
+
+    private final ImageRepository postImageRepository;
 
     @Value("${app.file-url-prefix}")
     private String fileUrlPrefix;
@@ -51,7 +55,8 @@ public class AdminPostServiceImpl implements AdminPostService {
     @Transactional
     public Long createPost(PostCreateDto postCreateDto) {
         String slug = generateSlug(postCreateDto.getTitle());
-        Post post = postCreateDto.toEntity(slug);
+        List<Category> categories = categoryRepository.findAllById(postCreateDto.getCategoryIds());
+        Post post = postCreateDto.toEntity(slug, categories);
         Post savedPost = postRepository.save(post);
 
         List<String> imagePaths = extractImagePaths(post.getContent());
@@ -62,12 +67,13 @@ public class AdminPostServiceImpl implements AdminPostService {
 
     @Override
     @Transactional
-    public void updatePost(Long id, PostUpdateDto postUpdateDto) {        
+    public void updatePost(Long id, PostUpdateDto postUpdateDto) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
 
-        post.update(postUpdateDto.getTitle(), postUpdateDto.getContent(), postUpdateDto.getCategory(),
-                postUpdateDto.isPublic());
+        List<Category> categories = categoryRepository.findAllById(postUpdateDto.getCategoryIds());
+
+        post.update(postUpdateDto.getTitle(), postUpdateDto.getContent(), categories, postUpdateDto.isPublic());
     }
 
     private String generateSlug(String title) {
@@ -94,7 +100,7 @@ public class AdminPostServiceImpl implements AdminPostService {
     }
 
     public void connectImageToPost(Long postId, String relativePath) {
-        PostImage postImage = postImageRepository.findByPath(relativePath)
+        Image postImage = postImageRepository.findByPath(relativePath)
                 .orElseThrow(() -> new RuntimeException("이미지 경로가 존재하지 않습니다: " + relativePath));
         postImage.setPost(postRepository.getReferenceById(postId));
         postImageRepository.save(postImage);
@@ -103,7 +109,7 @@ public class AdminPostServiceImpl implements AdminPostService {
     @Override
     @Transactional
     public String saveTemporaryImage(String path) {
-        PostImage postImage = PostImage.of(path);
+        Image postImage = Image.of(path);
         postImageRepository.save(postImage);
         return path;
     }

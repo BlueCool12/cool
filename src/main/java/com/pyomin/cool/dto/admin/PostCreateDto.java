@@ -1,5 +1,8 @@
 package com.pyomin.cool.dto.admin;
 
+import java.util.List;
+
+import com.pyomin.cool.domain.Category;
 import com.pyomin.cool.domain.Post;
 import com.pyomin.cool.dto.admin.request.PostCreateRequest;
 
@@ -10,13 +13,13 @@ public class PostCreateDto {
 
     private final String title;
     private final String content;
-    private final String category;
+    private final List<Long> categoryIds;
     private final boolean isPublic;
 
-    private PostCreateDto(String title, String content, String category, boolean isPublic) {
+    private PostCreateDto(String title, String content, List<Long> categoryIds, boolean isPublic) {
         this.title = title;
         this.content = content;
-        this.category = category;
+        this.categoryIds = categoryIds;
         this.isPublic = isPublic;
     }
 
@@ -24,15 +27,15 @@ public class PostCreateDto {
         return new PostCreateDto(
                 request.getTitle(),
                 request.getContent(),
-                request.getCategory(),
+                request.getCategoryIds(),
                 request.getIsPublic());
     }
 
-    public Post toEntity(String slug) {
+    public Post toEntity(String slug, List<Category> categories) {
         return Post.builder()
                 .title(this.title)
                 .content(this.content)
-                .category(this.category)
+                .categories(categories)
                 .isPublic(this.isPublic)
                 .slug(slug)
                 .build();

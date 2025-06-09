@@ -1,6 +1,9 @@
 package com.pyomin.cool.dto.admin.request;
 
+import java.util.List;
+
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -15,9 +18,8 @@ public class PostCreateRequest {
     @NotBlank(message = "내용은 필수입니다.")
     private String content;
 
-    @NotBlank(message = "카테고리는 필수입니다.")
-    @Size(max = 50, message = "카테고리는 50자 이내여야 합니다.")
-    private String category;
+    @NotEmpty(message = "카테고리를 하나 이상 선택해야 합니다.")    
+    private List<Long> categoryIds;
 
     @NotNull
     private Boolean isPublic;

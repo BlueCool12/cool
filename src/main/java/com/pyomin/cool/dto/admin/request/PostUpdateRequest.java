@@ -1,5 +1,7 @@
 package com.pyomin.cool.dto.admin.request;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.constraints.NotBlank;
@@ -15,7 +17,7 @@ public class PostUpdateRequest {
     private String content;
 
     @NotBlank
-    private String category;
+    private List<Long> categoryIds;
 
     @JsonProperty("isPublic")
     private boolean isPublic;

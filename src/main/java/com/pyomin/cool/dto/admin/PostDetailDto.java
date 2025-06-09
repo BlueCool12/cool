@@ -1,6 +1,7 @@
 package com.pyomin.cool.dto.admin;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.pyomin.cool.domain.Post;
 
@@ -14,7 +15,7 @@ public class PostDetailDto {
     private Long id;
     private String title;
     private String content;
-    private String category;
+    private List<CategoryDto> categories;
     private boolean isPublic;
     private boolean isDeleted;
     private String slug;
@@ -26,7 +27,9 @@ public class PostDetailDto {
                 post.getId(),
                 post.getTitle(),
                 post.getContent(),
-                post.getCategory(),
+                post.getCategories().stream()
+                        .map(CategoryDto::of)
+                        .toList(),
                 post.isPublic(),
                 post.isDeleted(),
                 post.getSlug(),

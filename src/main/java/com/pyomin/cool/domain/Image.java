@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostImage {
+public class Image {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,8 +30,8 @@ public class PostImage {
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    public static PostImage of(String path) {
-        PostImage image = new PostImage();
+    public static Image of(String path) {
+        Image image = new Image();
         image.path = path;
         return image;
     }
