@@ -1,7 +1,10 @@
 package com.pyomin.cool.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,6 +39,10 @@ public class Category {
 
     @ManyToMany(mappedBy = "categories")
     private List<Post> posts = new ArrayList<>();
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
 
     public void addPost(Post post) {
         this.posts.add(post);
