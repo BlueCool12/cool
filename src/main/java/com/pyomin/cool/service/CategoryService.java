@@ -1,0 +1,11 @@
+package com.pyomin.cool.service;
+
+import java.util.List;
+
+import com.pyomin.cool.dto.admin.response.CategoryListResponse;
+
+public interface CategoryService {
+
+    List<CategoryListResponse> getAllCategories();
+    
+}
