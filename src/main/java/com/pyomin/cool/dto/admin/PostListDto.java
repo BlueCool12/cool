@@ -13,7 +13,7 @@ public class PostListDto {
 
     private Long id;
     private String title;
-    private List<String> categories;
+    private String category;
     private boolean isPublic;
     private boolean isDeleted;
     private String slug;
@@ -24,9 +24,7 @@ public class PostListDto {
         return new PostListDto(
                 post.getId(),
                 post.getTitle(),
-                post.getCategories().stream()
-                        .map(c -> c.getName())
-                        .toList(),
+                post.getCategory() != null ? post.getCategory().getName() : null,
                 post.isPublic(),
                 post.isDeleted(),
                 post.getSlug(),

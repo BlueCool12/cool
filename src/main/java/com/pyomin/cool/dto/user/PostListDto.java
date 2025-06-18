@@ -1,7 +1,5 @@
 package com.pyomin.cool.dto.user;
 
-import java.util.List;
-
 import com.pyomin.cool.domain.Post;
 
 import lombok.AllArgsConstructor;
@@ -12,7 +10,7 @@ import lombok.Getter;
 public class PostListDto {
     private final String title;
     private final String contentSummary;
-    private final List<String> categories;
+    private final String category;
     private final String slug;
     private final String createdAt;
 
@@ -20,9 +18,7 @@ public class PostListDto {
         return new PostListDto(
                 post.getTitle(),
                 summary,
-                post.getCategories().stream()
-                        .map(c -> c.getName())
-                        .toList(),
+                post.getCategory() != null ? post.getCategory().getName() : "카테고리 없음",
                 post.getSlug(),
                 post.getCreatedAt().toString());
     }

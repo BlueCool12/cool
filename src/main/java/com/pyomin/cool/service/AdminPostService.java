@@ -17,5 +17,4 @@ public interface AdminPostService {
 
     void updatePost(Long id, PostUpdateDto postUpdateDto);
 
-    String saveTemporaryImage(String path);
 }

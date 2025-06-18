@@ -1,7 +1,5 @@
 package com.pyomin.cool.dto.user.response;
 
-import java.util.List;
-
 import com.pyomin.cool.dto.user.PostListDto;
 
 import lombok.AllArgsConstructor;
@@ -13,7 +11,7 @@ public class PostListResponse {
 
     private final String title;
     private final String contentSummary;
-    private final List<String> categories;
+    private final String category;
     private final String slug;
     private final String createdAt;
 
@@ -21,7 +19,7 @@ public class PostListResponse {
         return new PostListResponse(
                 dto.getTitle(),
                 dto.getContentSummary(),
-                dto.getCategories(),
+                dto.getCategory(),
                 dto.getSlug(),
                 dto.getCreatedAt());
     }

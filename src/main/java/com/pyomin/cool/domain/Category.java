@@ -12,7 +12,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -37,22 +36,17 @@ public class Category {
     @OneToMany(mappedBy = "parent")
     private List<Category> children = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "categories")
+    @OneToMany(mappedBy = "category")
     private List<Post> posts = new ArrayList<>();
 
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
-    public void addPost(Post post) {
-        this.posts.add(post);
-        if (!post.getCategories().contains(this)) {
-            post.getCategories().add(this);
-        }
-    }
-
-    public void removePost(Post post) {
-        this.posts.remove(post);
-        post.getCategories().remove(this);
+    public static Category create(String name, Category parent) {
+        Category c = new Category();
+        c.name = name;
+        c.parent = parent;
+        return c;
     }
 }

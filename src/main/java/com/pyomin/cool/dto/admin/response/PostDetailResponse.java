@@ -4,13 +4,12 @@ import com.pyomin.cool.dto.admin.CategoryDto;
 import com.pyomin.cool.dto.admin.PostDetailDto;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public record PostDetailResponse(
         Long id,
         String title,
         String content,
-        List<CategoryDto> categories,
+        CategoryDto category,
         boolean isPublic,
         boolean isDeleted,
         String slug,
@@ -21,7 +20,7 @@ public record PostDetailResponse(
                 dto.getId(),
                 dto.getTitle(),
                 dto.getContent(),
-                dto.getCategories(),
+                dto.getCategory(),
                 dto.isPublic(),
                 dto.isDeleted(),
                 dto.getSlug(),

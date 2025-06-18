@@ -1,7 +1,5 @@
 package com.pyomin.cool.dto.admin.response;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pyomin.cool.dto.admin.PostListDto;
 
@@ -14,7 +12,7 @@ public class PostListResponse {
 
     private Long id;
     private String title;
-    private List<String> categories;
+    private String category;
     @JsonProperty("isPublic")
     private boolean isPublic;
     @JsonProperty("isDeleted")
@@ -27,7 +25,7 @@ public class PostListResponse {
         return new PostListResponse(
                 dto.getId(),
                 dto.getTitle(),
-                dto.getCategories(),
+                dto.getCategory(),
                 dto.isPublic(),
                 dto.isDeleted(),
                 dto.getSlug(),
