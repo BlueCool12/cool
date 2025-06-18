@@ -11,14 +11,14 @@ public class PostUpdateDto {
 
     private String title;
     private String content;
-    private String category;
+    private Long categoryId;
     private boolean isPublic;
 
     public static PostUpdateDto from(PostUpdateRequest request) {
         return new PostUpdateDto(
                 request.getTitle(),
                 request.getContent(),
-                request.getCategory(),
+                request.getCategoryId(),
                 request.isPublic());
     }
 }

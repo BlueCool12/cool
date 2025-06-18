@@ -18,7 +18,7 @@ public class PostListDto {
         return new PostListDto(
                 post.getTitle(),
                 summary,
-                post.getCategory(),
+                post.getCategory() != null ? post.getCategory().getName() : "카테고리 없음",
                 post.getSlug(),
                 post.getCreatedAt().toString());
     }

@@ -1,5 +1,7 @@
 package com.pyomin.cool.dto.admin;
 
+import java.util.List;
+
 import com.pyomin.cool.domain.Post;
 
 import lombok.AllArgsConstructor;
@@ -22,7 +24,7 @@ public class PostListDto {
         return new PostListDto(
                 post.getId(),
                 post.getTitle(),
-                post.getCategory(),
+                post.getCategory() != null ? post.getCategory().getName() : null,
                 post.isPublic(),
                 post.isDeleted(),
                 post.getSlug(),

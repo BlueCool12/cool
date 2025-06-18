@@ -1,5 +1,7 @@
 package com.pyomin.cool.dto.user;
 
+import java.util.List;
+
 import com.pyomin.cool.domain.Post;
 
 import lombok.AllArgsConstructor;
@@ -17,7 +19,7 @@ public class PostDetailDto {
         return new PostDetailDto(
                 post.getTitle(),
                 post.getContent(),
-                post.getCategory(),
+                post.getCategory() != null ? post.getCategory().getName() : "카테고리 없음",
                 post.getCreatedAt().toString());
     }
 }

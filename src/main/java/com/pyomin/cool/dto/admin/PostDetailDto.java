@@ -14,7 +14,7 @@ public class PostDetailDto {
     private Long id;
     private String title;
     private String content;
-    private String category;
+    private CategoryDto category;
     private boolean isPublic;
     private boolean isDeleted;
     private String slug;
@@ -26,7 +26,7 @@ public class PostDetailDto {
                 post.getId(),
                 post.getTitle(),
                 post.getContent(),
-                post.getCategory(),
+                post.getCategory() != null ? CategoryDto.of(post.getCategory()) : null,
                 post.isPublic(),
                 post.isDeleted(),
                 post.getSlug(),
