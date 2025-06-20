@@ -35,13 +35,18 @@ public class UserCommentServiceImpl implements UserCommentService {
 
         String nickname = sanitizeNickname(dto.getNickname());
 
-        Comment comment = new Comment(post, parent, nickname, dto.getContent());
+        String password = dto.getPassword();
+        if (password == null || !password.matches("\\d{4}")) {
+            throw new IllegalArgumentException("비밀번호는 숫자 4자리여야 합니다.");
+        }
+
+        Comment comment = new Comment(post, parent, nickname, password, dto.getContent());
         commentRepository.save(comment);
     }
 
     @Override
     public List<CommentListDto> getAllComments(Long postId) {
-        List<Comment> comments = commentRepository.findAllByPostId(postId);
+        List<Comment> comments = commentRepository.findAllByPostIdOrderByCreatedAtAsc(postId);
 
         List<Comment> parent = comments.stream()
                 .filter(comment -> comment.getParent() == null)
@@ -50,6 +55,19 @@ public class UserCommentServiceImpl implements UserCommentService {
         return parent.stream()
                 .map(CommentListDto::from)
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public void deleteComment(Long id, String password) {
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
+
+        if (!comment.getPassword().equals(password)) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
+        comment.delete();
     }
 
     private String sanitizeNickname(String nickname) {

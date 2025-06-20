@@ -8,5 +8,5 @@ import com.pyomin.cool.domain.Comment;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    List<Comment> findAllByPostId(Long postId);
+    List<Comment> findAllByPostIdOrderByCreatedAtAsc(Long postId);
 }

@@ -10,4 +10,6 @@ public interface UserCommentService {
     void createComment(CommentCreateDto dto);
 
     List<CommentListDto> getAllComments(Long postId);
+
+    void deleteComment(Long id, String password);
 }

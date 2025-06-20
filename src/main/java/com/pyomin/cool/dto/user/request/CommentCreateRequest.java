@@ -16,6 +16,10 @@ public class CommentCreateRequest {
     @Size(max = 10, message = "닉네임은 최대 10자입니다.")
     private String nickname;
 
+    @NotBlank(message = "비밀번호는 필수입니다.")
+    @Size(min = 4, max = 4, message = "비밀번호는 4자리 숫자여야 합니다.")
+    private String password;
+
     @NotBlank(message = "댓글 내용을 입력해주세요.")
     @Size(max = 250, message = "댓글은 최대 250자까지 입력할 수 있습니다.")
     private String content;

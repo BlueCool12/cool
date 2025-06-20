@@ -25,6 +25,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Comment {
 
+    public Comment(Post post, Comment parent, String nickname, String password, String content) {
+        this.post = post;
+        this.parent = parent;
+        this.nickname = nickname;
+        this.password = password;
+        this.content = content;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -43,6 +51,9 @@ public class Comment {
     @Size(max = 10, message = "닉네임은 최대 10자입니다.")
     private String nickname;
 
+    @Column(length = 4, nullable = false)
+    private String password;
+
     @Size(max = 250, message = "댓글은 최대 250자입니다.")
     @Column(nullable = false)
     private String content;
@@ -58,10 +69,7 @@ public class Comment {
         this.createdAt = LocalDateTime.now();
     }
 
-    public Comment(Post post, Comment parent, String nickname, String content) {
-        this.post = post;
-        this.parent = parent;
-        this.nickname = nickname;
-        this.content = content;
+    public void delete() {
+        this.isDeleted = true;
     }
 }

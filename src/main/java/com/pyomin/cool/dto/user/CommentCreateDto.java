@@ -12,6 +12,7 @@ public class CommentCreateDto {
     private Long parentId;
     private Long postId;
     private String nickname;
+    private String password;
     private String content;
 
     public static CommentCreateDto from(CommentCreateRequest request) {
@@ -19,6 +20,7 @@ public class CommentCreateDto {
                 request.getParentId(),
                 request.getPostId(),
                 request.getNickname(),
+                request.getPassword(),
                 request.getContent());
     }
 }
