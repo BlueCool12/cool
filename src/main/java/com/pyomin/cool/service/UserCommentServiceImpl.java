@@ -9,6 +9,7 @@ import com.pyomin.cool.domain.Comment;
 import com.pyomin.cool.domain.Post;
 import com.pyomin.cool.dto.user.CommentCreateDto;
 import com.pyomin.cool.dto.user.CommentListDto;
+import com.pyomin.cool.dto.user.CommentUpdateDto;
 import com.pyomin.cool.repository.CommentRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -72,5 +73,21 @@ public class UserCommentServiceImpl implements UserCommentService {
 
     private String sanitizeNickname(String nickname) {
         return (nickname == null || nickname.trim().isEmpty()) ? "익명" : nickname.trim();
+    }
+
+    @Override
+    public boolean verifyCommentPassword(Long commentId, String password) {
+        return commentRepository.findById(commentId)
+                .map(comment -> comment.getPassword().equals(password))
+                .orElse(false);
+    }
+
+    @Override
+    @Transactional
+    public void updateComment(CommentUpdateDto dto) {
+        Comment comment = commentRepository.findById(dto.getId())
+                .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
+
+        comment.update(dto);
     }
 }
