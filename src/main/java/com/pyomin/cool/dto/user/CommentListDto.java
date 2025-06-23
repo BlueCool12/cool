@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pyomin.cool.domain.Comment;
 
 import lombok.AllArgsConstructor;
@@ -16,6 +17,10 @@ public class CommentListDto {
     private final Long id;
     private final String nickname;
     private final String content;
+
+    @JsonProperty("isDeleted")
+    private final boolean deleted;
+    
     private final LocalDateTime createdAt;
     private final List<CommentListDto> children;
 
@@ -23,7 +28,8 @@ public class CommentListDto {
         return new CommentListDto(
                 comment.getId(),
                 comment.getNickname(),
-                comment.isDeleted() ? "삭제된 댓글입니다." : comment.getContent(),
+                comment.getContent(),
+                comment.isDeleted(),
                 comment.getCreatedAt(),
                 comment.getChildren().stream()
                         .map(CommentListDto::from)
