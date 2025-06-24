@@ -27,8 +27,8 @@ public class FileServiceImpl implements FileService {
     public byte[] optimize(InputStream inputStream) {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             Thumbnails.of(inputStream)
-                    .size(1920, 1080)
-                    .outputQuality(0.8)
+                    .size(800, 600)
+                    .outputQuality(1.0)
                     .toOutputStream(outputStream);
             return outputStream.toByteArray();
         } catch (IOException e) {
