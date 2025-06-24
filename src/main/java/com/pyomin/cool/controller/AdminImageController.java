@@ -33,7 +33,7 @@ public class AdminImageController {
         String originalFilename = file.getOriginalFilename();
 
         try (InputStream inputStream = file.getInputStream()) {
-            byte[] optimized = fileService.optimize(inputStream);
+            byte[] optimized = fileService.optimize(inputStream, originalFilename);
             String relativePath = fileService.save(optimized, originalFilename);
             String fileUrl = fileUrlPrefix + adminImageService.saveImage(relativePath);
 
