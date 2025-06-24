@@ -21,14 +21,17 @@ import net.coobird.thumbnailator.Thumbnails;
 public class FileServiceImpl implements FileService {
 
     @Value("${file.upload-dir}")
-    private String UPLOAD_DIR;    
+    private String UPLOAD_DIR;
 
     @Override
-    public byte[] optimize(InputStream inputStream) {
+    public byte[] optimize(InputStream inputStream, String originalFilename) {
+        String ext = getFileExtension(originalFilename).toLowerCase();
+
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             Thumbnails.of(inputStream)
-                    .size(800, 600)
+                    .scale(1.0)
                     .outputQuality(1.0)
+                    .outputFormat(ext.replace(".", ""))
                     .toOutputStream(outputStream);
             return outputStream.toByteArray();
         } catch (IOException e) {
