@@ -1,5 +1,6 @@
 package com.pyomin.cool.dto.admin.response;
 
+import com.pyomin.cool.dto.admin.CategoryDto;
 import com.pyomin.cool.dto.admin.PostDetailDto;
 
 import java.time.LocalDateTime;
@@ -8,7 +9,7 @@ public record PostDetailResponse(
         Long id,
         String title,
         String content,
-        String category,
+        CategoryDto category,
         boolean isPublic,
         boolean isDeleted,
         String slug,

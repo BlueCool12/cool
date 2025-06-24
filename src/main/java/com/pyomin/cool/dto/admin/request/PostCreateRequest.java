@@ -15,9 +15,8 @@ public class PostCreateRequest {
     @NotBlank(message = "내용은 필수입니다.")
     private String content;
 
-    @NotBlank(message = "카테고리는 필수입니다.")
-    @Size(max = 50, message = "카테고리는 50자 이내여야 합니다.")
-    private String category;
+    @NotNull(message = "카테고리를 선택해야 합니다.")
+    private Long categoryId;
 
     @NotNull
     private Boolean isPublic;

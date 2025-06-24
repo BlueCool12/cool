@@ -18,12 +18,18 @@ public class UserPostServiceImpl implements UserPostService {
 
     private final PostRepository postRepository;
 
+    private final UserCategoryService categoryService;
+
     @Override
-    public List<PostListDto> getAllPosts() {
-        return postRepository.findVisiblePosts().stream()
-                .map(post -> {
-                    return PostListDto.of(post, summarize(post.getContent()));
-                })                
+    public List<PostListDto> getAllPosts(String category) {
+        Long categoryId = null;
+
+        if (category != null) {
+            categoryId = categoryService.getCategoryIdByName(category);
+        }
+
+        return postRepository.findVisiblePosts(categoryId).stream()
+                .map(post -> PostListDto.of(post, summarize(post.getContent())))
                 .collect(Collectors.toList());
     }
 
@@ -38,6 +44,12 @@ public class UserPostServiceImpl implements UserPostService {
         Post post = postRepository.findBySlug(slug)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 
-        return PostDetailDto.from(post);        
+        return PostDetailDto.from(post);
+    }
+
+    @Override
+    public Post getPostOrThrow(Long postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
     }
 }

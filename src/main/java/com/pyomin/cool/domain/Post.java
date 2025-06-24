@@ -1,16 +1,14 @@
 package com.pyomin.cool.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import lombok.AccessLevel;
@@ -36,8 +34,9 @@ public class Post {
     @Column(nullable = false, columnDefinition = "text")
     private String content;
 
-    @Column(nullable = false, length = 50)
-    private String category;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean isPublic;
@@ -54,10 +53,6 @@ public class Post {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostImage> images = new ArrayList<>();
-
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
@@ -69,7 +64,7 @@ public class Post {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public void update(String title, String content, String category, boolean isPublic) {
+    public void update(String title, String content, Category category, boolean isPublic) {
         this.title = title;
         this.content = content;
         this.category = category;

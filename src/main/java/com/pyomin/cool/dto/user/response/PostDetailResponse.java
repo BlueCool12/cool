@@ -8,6 +8,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class PostDetailResponse {
+    private final Long id;
     private final String title;
     private final String content;
     private final String category;
@@ -15,6 +16,7 @@ public class PostDetailResponse {
 
     public static PostDetailResponse from(PostDetailDto dto) {
         return new PostDetailResponse(
+                dto.getId(),
                 dto.getTitle(),
                 dto.getContent(),
                 dto.getCategory(),

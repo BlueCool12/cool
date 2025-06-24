@@ -43,7 +43,7 @@ public class AuthController {
                 .sameSite(isSecure ? "None" : "Lax")
                 .domain(cookieDomain)
                 .path("/")
-                .maxAge(60 * 60)
+                .maxAge(60 * 60 * 24)
                 .build();
 
         response.setHeader("Set-Cookie", cookie.toString());
