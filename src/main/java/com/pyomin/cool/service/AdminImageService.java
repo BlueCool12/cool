@@ -8,4 +8,6 @@ public interface AdminImageService {
 
     void connectImagesToPost(Long postId, List<String> paths);
 
+    void deleteMappingsByPostId(Long postId);
+
 }
