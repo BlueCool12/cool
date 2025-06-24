@@ -75,6 +75,10 @@ public class AdminPostServiceImpl implements AdminPostService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다."));
 
         post.update(postUpdateDto.getTitle(), postUpdateDto.getContent(), category, postUpdateDto.isPublic());
+
+        adminImageService.deleteMappingsByPostId(post.getId());
+        List<String> imagePaths = extractImagePaths(post.getContent());
+        adminImageService.connectImagesToPost(post.getId(), imagePaths);
     }
 
     private String generateSlug(String title) {

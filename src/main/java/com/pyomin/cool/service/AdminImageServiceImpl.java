@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.pyomin.cool.domain.Image;
 import com.pyomin.cool.domain.ImageMapping;
+import com.pyomin.cool.domain.ImageMapping.TargetType;
 import com.pyomin.cool.repository.ImageMappingRepository;
 import com.pyomin.cool.repository.ImageRepository;
 
@@ -49,6 +50,12 @@ public class AdminImageServiceImpl implements AdminImageService {
         }
 
         return images;
+    }
+
+    @Override
+    @Transactional
+    public void deleteMappingsByPostId(Long postId) {
+        imageMappingRepository.deleteByTargetIdAndTargetType(postId, TargetType.POST);
     }
 
 }
