@@ -14,6 +14,7 @@ public class PostListResponse {
     private final String category;
     private final String slug;
     private final String createdAt;
+    private final String updatedAt;
 
     public static PostListResponse from(PostListDto dto) {
         return new PostListResponse(
@@ -21,6 +22,7 @@ public class PostListResponse {
                 dto.getContentSummary(),
                 dto.getCategory(),
                 dto.getSlug(),
-                dto.getCreatedAt());
+                dto.getCreatedAt(),
+                dto.getUpdatedAt());
     }
 }
