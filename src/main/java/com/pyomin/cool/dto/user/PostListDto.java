@@ -13,6 +13,7 @@ public class PostListDto {
     private final String category;
     private final String slug;
     private final String createdAt;
+    private final String updatedAt;
 
     public static PostListDto of(Post post, String summary) {
         return new PostListDto(
@@ -20,6 +21,7 @@ public class PostListDto {
                 summary,
                 post.getCategory() != null ? post.getCategory().getName() : "카테고리 없음",
                 post.getSlug(),
-                post.getCreatedAt().toString());
+                post.getCreatedAt().toString(),
+                post.getUpdatedAt().toString());
     }
 }

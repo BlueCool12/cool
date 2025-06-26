@@ -36,7 +36,7 @@ public class UserPostServiceImpl implements UserPostService {
     private String summarize(String content) {
         String plainText = content.replaceAll("<[^>]*>", "");
         plainText = plainText.replaceAll("&[^;]+;", " ");
-        return plainText.length() > 100 ? plainText.substring(0, 200) : plainText;
+        return plainText.length() > 250 ? plainText.substring(0, 250) : plainText;
     }
 
     @Override
