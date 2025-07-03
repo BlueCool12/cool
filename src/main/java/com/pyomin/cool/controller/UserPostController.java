@@ -24,7 +24,7 @@ public class UserPostController {
     private final UserPostService userPostService;
 
     @GetMapping
-    public List<PostListResponse> getAllPosts(@RequestParam(required = false) String category) {
+    public List<PostListResponse> getAllPosts(@RequestParam(name = "category", required = false) String category) {
         return userPostService.getAllPosts(category).stream()
                 .map(PostListResponse::from)
                 .collect(Collectors.toList());

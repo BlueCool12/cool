@@ -36,7 +36,7 @@ public class UserCommentController {
     }
 
     @GetMapping
-    public CommentListResponse getAllComments(@RequestParam Long postId) {
+    public CommentListResponse getAllComments(@RequestParam("postId") Long postId) {
         return CommentListResponse.from(commentService.getAllComments(postId));
     }
 
