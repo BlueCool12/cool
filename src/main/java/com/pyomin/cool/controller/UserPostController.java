@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pyomin.cool.dto.user.PostDetailDto;
 import com.pyomin.cool.dto.user.response.PostDetailResponse;
+import com.pyomin.cool.dto.user.response.PostLatestResponse;
 import com.pyomin.cool.dto.user.response.PostListResponse;
 import com.pyomin.cool.service.UserPostService;
 
@@ -34,6 +35,13 @@ public class UserPostController {
     public PostDetailResponse getPostMySlug(@PathVariable("slug") String slug) {
         PostDetailDto postDetailDto = userPostService.getPostBySlug(slug);
         return PostDetailResponse.from(postDetailDto);
+    }
+
+    @GetMapping("/latest")
+    public List<PostLatestResponse> getLatestPosts() {
+        return userPostService.getLatestPosts().stream()
+                .map(PostLatestResponse::from)
+                .collect(Collectors.toList());
     }
 
 }

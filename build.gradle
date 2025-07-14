@@ -29,6 +29,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	
+	// redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
 	// Thumbnailator
 	implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.20'	
 
