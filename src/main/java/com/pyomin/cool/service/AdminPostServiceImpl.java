@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,8 @@ public class AdminPostServiceImpl implements AdminPostService {
 
     private final AdminImageService adminImageService;
 
+    private final RedisTemplate<String, Object> redisTemplate;
+
     @Value("${app.file-url-prefix}")
     private String fileUrlPrefix;
 
@@ -46,6 +49,8 @@ public class AdminPostServiceImpl implements AdminPostService {
 
         List<String> imagePaths = extractImagePaths(post.getContent());
         adminImageService.connectImagesToPost(savedPost.getId(), imagePaths);
+
+        redisTemplate.delete("main:latest-posts");
 
         return savedPost.getId();
     }
@@ -79,6 +84,8 @@ public class AdminPostServiceImpl implements AdminPostService {
         adminImageService.deleteMappingsByPostId(post.getId());
         List<String> imagePaths = extractImagePaths(post.getContent());
         adminImageService.connectImagesToPost(post.getId(), imagePaths);
+
+        redisTemplate.delete("main:latest-posts");
     }
 
     private String generateSlug(String title) {

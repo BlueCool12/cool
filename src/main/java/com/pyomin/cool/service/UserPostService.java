@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.pyomin.cool.domain.Post;
 import com.pyomin.cool.dto.user.PostDetailDto;
+import com.pyomin.cool.dto.user.PostLatestDto;
 import com.pyomin.cool.dto.user.PostListDto;
 
 public interface UserPostService {
@@ -12,4 +13,6 @@ public interface UserPostService {
     PostDetailDto getPostBySlug(String slug);
 
     Post getPostOrThrow(Long postId);
+
+    List<PostLatestDto> getLatestPosts();
 }
