@@ -3,6 +3,7 @@ package com.pyomin.cool.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,7 +24,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                 AND (:categoryId IS NULL OR p.category.id = :categoryId)
                 ORDER BY p.createdAt DESC
             """)
-    List<Post> findVisiblePosts(@Param("categoryId") Long categoryId);
+    Page<Post> findVisiblePosts(@Param("categoryId") Long categoryId, Pageable pageable);
 
     Optional<Post> findBySlug(String slug);
 

@@ -4,7 +4,9 @@ import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -29,16 +31,16 @@ public class UserPostServiceImpl implements UserPostService {
     private static final String LATEST_POSTS_KEY = "main:latest-posts";
 
     @Override
-    public List<PostListDto> getAllPosts(String category) {
+    public Page<PostListDto> getAllPosts(String category, Pageable pageable) {
         Long categoryId = null;
 
         if (category != null) {
             categoryId = categoryService.getCategoryIdByName(category);
         }
 
-        return postRepository.findVisiblePosts(categoryId).stream()
-                .map(post -> PostListDto.of(post, summarize(post.getContent())))
-                .collect(Collectors.toList());
+        Page<Post> page = postRepository.findVisiblePosts(categoryId, pageable);
+
+        return page.map(post -> PostListDto.of(post, summarize(post.getContent())));
     }
 
     private String summarize(String content) {
@@ -75,9 +77,9 @@ public class UserPostServiceImpl implements UserPostService {
         List<PostLatestDto> dtoList = latestPosts.stream()
                 .map(PostLatestDto::from)
                 .collect(Collectors.toList());
-                
+
         redisTemplate.opsForValue().set(LATEST_POSTS_KEY, dtoList, Duration.ofDays(1));
-                
+
         return dtoList;
     }
 

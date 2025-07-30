@@ -1,27 +1,19 @@
 package com.pyomin.cool.service;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.UUID;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import com.pyomin.cool.dto.user.PostListDto;
 
 import lombok.RequiredArgsConstructor;
 import net.coobird.thumbnailator.Thumbnails;
@@ -31,53 +23,7 @@ import net.coobird.thumbnailator.Thumbnails;
 public class FileServiceImpl implements FileService {
 
     @Value("${file.upload-dir}")
-    private String UPLOAD_DIR;
-
-    private final UserPostService postService;
-
-    @Override
-    public ByteArrayInputStream generateSitemapZip(int chunkSize) throws IOException {
-        ByteArrayOutputStream zipOut = new ByteArrayOutputStream();
-        ZipOutputStream zos = new ZipOutputStream(zipOut);
-
-        List<PostListDto> posts = postService.getAllPosts(null);
-
-        int total = posts.size();
-        int fileIndex = 1;
-
-        for (int i = 0; i < total; i += chunkSize) {
-            List<PostListDto> chunk = posts.subList(i, Math.min(i + chunkSize, total));
-            String fileName = "sitemap-" + fileIndex + ".xml";
-            StringBuilder sb = new StringBuilder();
-
-            sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-            sb.append("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n");
-
-            for (PostListDto post : chunk) {
-                sb.append("  <url>\n");
-                sb.append("    <loc>https://pyomin.com/posts/")
-                        .append(URLEncoder.encode(post.getSlug(), StandardCharsets.UTF_8))
-                        .append("</loc>\n");
-
-                String updatedAt = post.getUpdatedAt();
-                String lastmod = updatedAt.contains("T") ? updatedAt.split("T")[0] : updatedAt;
-
-                sb.append("    <lastmod>").append(lastmod).append("</lastmod>\n");
-                sb.append("  </url>\n");
-            }
-
-            sb.append("</urlset>");
-
-            zos.putNextEntry(new ZipEntry(fileName));
-            zos.write(sb.toString().getBytes(StandardCharsets.UTF_8));
-            zos.closeEntry();
-
-            fileIndex++;
-        }
-
-        zos.close(); // finalize zip
-        return new ByteArrayInputStream(zipOut.toByteArray());
-    }
+    private String UPLOAD_DIR;    
 
     @Override
     public byte[] optimize(InputStream inputStream, String originalFilename) {
