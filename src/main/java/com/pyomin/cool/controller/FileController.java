@@ -1,6 +1,5 @@
 package com.pyomin.cool.controller;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,29 +15,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pyomin.cool.service.FileService;
-
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/files")
-public class FileController {
-
-    private final FileService fileService;
+public class FileController {    
 
     @Value("${file.upload-dir}")
     private String uploadDir;
-
-    @GetMapping("/sitemaps/download")
-    public ResponseEntity<InputStreamResource> downloadSitemapZip() throws IOException {
-        ByteArrayInputStream zipStream = fileService.generateSitemapZip(5000);
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=sitemaps.zip")
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(new InputStreamResource(zipStream));
-    }
 
     @GetMapping("/{yearMonth}/{fileName}")
     public ResponseEntity<InputStreamResource> serverFile(
