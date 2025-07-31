@@ -45,3 +45,4 @@ app:
 
 auth:
   cookie-domain: .pyomin.com
+  frontend-key: ${FRONTEND_KEY}
