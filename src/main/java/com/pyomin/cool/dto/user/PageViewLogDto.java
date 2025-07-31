@@ -30,13 +30,27 @@ public class PageViewLogDto {
     }
 
     private static String resolveDeviceType(String userAgent) {
-        if (userAgent == null)
+        if (userAgent == null || userAgent.isBlank()) {
             return "unknown";
+        }
+
         String ua = userAgent.toLowerCase();
-        if (ua.contains("tablet") || ua.contains("ipad"))
+
+        if (ua.contains("bot") || ua.contains("crawl") || ua.contains("spider") || ua.contains("slurp") ||
+                ua.contains("baiduspider") || ua.contains("yeti") || ua.contains("naverbot") ||
+                ua.contains("facebookexternalhit") || ua.contains("python-requests") || ua.contains("axios")
+                || ua.contains("curl")) {
+            return "bot";
+        }
+
+        if (ua.contains("tablet") || ua.contains("ipad")) {
             return "tablet";
-        if (ua.contains("mobile"))
+        }
+
+        if (ua.contains("mobile")) {
             return "mobile";
+        }
+
         return "desktop";
     }
 }

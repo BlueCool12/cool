@@ -28,9 +28,9 @@ public class UserPageViewController {
 
     @PostMapping("/log")
     public void logPageView(HttpServletRequest request, @RequestBody PageViewLogRequest body) {
-        String key = Optional.ofNullable(request.getHeader("X-Frontend-Key")).orElse("");
+        String key = Optional.ofNullable(request.getHeader("X-Api-Access-Key")).orElse("");        
 
-        if (!frontendKey.trim().equals(key.trim())) {
+        if (frontendKey == null || !frontendKey.trim().equals(key.trim())) {
             return;
         }
 
@@ -38,7 +38,7 @@ public class UserPageViewController {
             return;
         }
 
-        String referrer = request.getHeader("referer");
+        String referrer = Optional.ofNullable(request.getHeader("X-Referrer")).orElse("");
         String ipAddress = getClientIp(request);
         String userAgent = request.getHeader("User-Agent");
         String sessionId = getSessionIdFromCookie(request);
