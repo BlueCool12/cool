@@ -36,10 +36,7 @@ public class PageViewLogDto {
 
         String ua = userAgent.toLowerCase();
 
-        if (ua.contains("bot") || ua.contains("crawl") || ua.contains("spider") || ua.contains("slurp") ||
-                ua.contains("baiduspider") || ua.contains("yeti") || ua.contains("naverbot") ||
-                ua.contains("facebookexternalhit") || ua.contains("python-requests") || ua.contains("axios")
-                || ua.contains("curl")) {
+        if (ua.contains("mediapartners-google")) {
             return "bot";
         }
 
