@@ -11,6 +11,7 @@ public class PostDetailDto {
     private final Long id;
     private final String title;
     private final String content;
+    private final String description;
     private final String category;
     private final String createdAt;
 
@@ -19,6 +20,7 @@ public class PostDetailDto {
                 post.getId(),
                 post.getTitle(),
                 post.getContent(),
+                post.getDescription(),
                 post.getCategory() != null ? post.getCategory().getName() : "카테고리 없음",
                 post.getCreatedAt().toString());
     }

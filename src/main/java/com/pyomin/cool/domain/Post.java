@@ -31,8 +31,11 @@ public class Post {
     @Column(nullable = false, length = 255)
     private String title;
 
-    @Column(nullable = false, columnDefinition = "text")
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -66,7 +69,7 @@ public class Post {
 
     public void update(String title, String content, Category category, boolean isPublic) {
         this.title = title;
-        this.content = content;
+        this.content = content;        
         this.category = category;
         this.isPublic = isPublic;
     }
