@@ -10,6 +10,7 @@ import lombok.Getter;
 public class PostListDto {
     private final String title;
     private final String contentSummary;
+    private final String description;
     private final String category;
     private final String slug;
     private final String createdAt;
@@ -19,6 +20,7 @@ public class PostListDto {
         return new PostListDto(
                 post.getTitle(),
                 summary,
+                post.getDescription(),
                 post.getCategory() != null ? post.getCategory().getName() : "카테고리 없음",
                 post.getSlug(),
                 post.getCreatedAt().toString(),

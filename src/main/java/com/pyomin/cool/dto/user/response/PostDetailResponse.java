@@ -11,6 +11,7 @@ public class PostDetailResponse {
     private final Long id;
     private final String title;
     private final String content;
+    private final String description;
     private final String category;
     private final String createdAt;
 
@@ -19,6 +20,7 @@ public class PostDetailResponse {
                 dto.getId(),
                 dto.getTitle(),
                 dto.getContent(),
+                dto.getDescription(),
                 dto.getCategory(),
                 dto.getCreatedAt());
     }

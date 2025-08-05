@@ -11,6 +11,7 @@ public class PostListResponse {
 
     private final String title;
     private final String contentSummary;
+    private final String description;
     private final String category;
     private final String slug;
     private final String createdAt;
@@ -20,6 +21,7 @@ public class PostListResponse {
         return new PostListResponse(
                 dto.getTitle(),
                 dto.getContentSummary(),
+                dto.getDescription(),
                 dto.getCategory(),
                 dto.getSlug(),
                 dto.getCreatedAt(),
