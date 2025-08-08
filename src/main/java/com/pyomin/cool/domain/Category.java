@@ -29,6 +29,9 @@ public class Category {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Column(nullable = false, unique = true, length = 20)
+    private String slug;
+
     @ManyToOne
     @JoinColumn(name = "parent_id")
     private Category parent;

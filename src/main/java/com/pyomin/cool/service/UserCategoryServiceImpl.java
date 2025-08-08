@@ -28,9 +28,9 @@ public class UserCategoryServiceImpl implements UserCategoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Long getCategoryIdByName(String name) {
-        return categoryRepository.findByName(name)
-                .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다: " + name))
+    public Long getCategoryIdBySlug(String slug) {
+        return categoryRepository.findBySlug(slug)
+                .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다: " + slug))
                 .getId();
     }
 

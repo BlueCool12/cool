@@ -15,6 +15,9 @@ public class PostDetailResponse {
     private final String category;
     private final String createdAt;
 
+    private final PostSummaryResponse previousPost;
+    private final PostSummaryResponse nextPost;
+
     public static PostDetailResponse from(PostDetailDto dto) {
         return new PostDetailResponse(
                 dto.getId(),
@@ -22,6 +25,8 @@ public class PostDetailResponse {
                 dto.getContent(),
                 dto.getDescription(),
                 dto.getCategory(),
-                dto.getCreatedAt());
+                dto.getCreatedAt(),
+                dto.getPreviousPost() != null ? PostSummaryResponse.from(dto.getPreviousPost()) : null,
+                dto.getNextPost() != null ? PostSummaryResponse.from(dto.getNextPost()) : null);
     }
 }

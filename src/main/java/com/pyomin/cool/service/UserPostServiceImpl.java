@@ -1,6 +1,7 @@
 package com.pyomin.cool.service;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,6 +15,7 @@ import com.pyomin.cool.domain.Post;
 import com.pyomin.cool.dto.user.PostDetailDto;
 import com.pyomin.cool.dto.user.PostLatestDto;
 import com.pyomin.cool.dto.user.PostListDto;
+import com.pyomin.cool.dto.user.PostSummaryDto;
 import com.pyomin.cool.repository.PostRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -35,7 +37,7 @@ public class UserPostServiceImpl implements UserPostService {
         Long categoryId = null;
 
         if (category != null) {
-            categoryId = categoryService.getCategoryIdByName(category);
+            categoryId = categoryService.getCategoryIdBySlug(category);
         }
 
         Page<Post> page = postRepository.findVisiblePosts(categoryId, pageable);
@@ -50,11 +52,20 @@ public class UserPostServiceImpl implements UserPostService {
     }
 
     @Override
-    public PostDetailDto getPostBySlug(String slug) {
+    public PostDetailDto getPostBySlug(String slug, Pageable limitOne) {
         Post post = postRepository.findBySlug(slug)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 
-        return PostDetailDto.from(post);
+        LocalDateTime createdAt = post.getCreatedAt();
+        Long postId = post.getId();
+
+        List<Post> prev = postRepository.findPreviousPost(createdAt, postId, limitOne);
+        List<Post> next = postRepository.findNextPost(createdAt, postId, limitOne);
+
+        PostSummaryDto prevDto = prev.isEmpty() ? null : PostSummaryDto.from(prev.get(0));
+        PostSummaryDto nextDto = next.isEmpty() ? null : PostSummaryDto.from(next.get(0));
+
+        return PostDetailDto.from(post, prevDto, nextDto);
     }
 
     @Override

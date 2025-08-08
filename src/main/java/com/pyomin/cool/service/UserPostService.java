@@ -13,7 +13,7 @@ import com.pyomin.cool.dto.user.PostListDto;
 public interface UserPostService {
     Page<PostListDto> getAllPosts(String category, Pageable page);
 
-    PostDetailDto getPostBySlug(String slug);
+    PostDetailDto getPostBySlug(String slug, Pageable limitOne);
 
     Post getPostOrThrow(Long postId);
 
