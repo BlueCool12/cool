@@ -1,5 +1,6 @@
 package com.pyomin.cool.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +26,28 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                 ORDER BY p.createdAt DESC
             """)
     Page<Post> findVisiblePosts(@Param("categoryId") Long categoryId, Pageable pageable);
+
+    @Query("""
+            SELECT p FROM Post p
+            WHERE p.isDeleted = false AND p.isPublic = true
+            AND (p.createdAt < :createdAt OR (p.createdAt = :createdAt AND p.id < :postId))
+            ORDER BY p.createdAt DESC, p.id DESC
+            """)
+    List<Post> findPreviousPost(
+            @Param("createdAt") LocalDateTime createdAt,
+            @Param("postId") Long postId,
+            Pageable pageable);
+
+    @Query("""
+            SELECT p FROM Post p
+            WHERE p.isDeleted = false AND p.isPublic = true
+            AND (p.createdAt > :createdAt OR (p.createdAt = :createdAt AND p.id > :postId))
+            ORDER BY p.createdAt ASC, p.id ASC
+            """)
+    List<Post> findNextPost(
+            @Param("createdAt") LocalDateTime createdAt,
+            @Param("postId") Long postId,
+            Pageable pageable);
 
     Optional<Post> findBySlug(String slug);
 

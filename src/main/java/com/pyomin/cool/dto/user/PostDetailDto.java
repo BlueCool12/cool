@@ -15,13 +15,18 @@ public class PostDetailDto {
     private final String category;
     private final String createdAt;
 
-    public static PostDetailDto from(Post post) {
+    private final PostSummaryDto previousPost;
+    private final PostSummaryDto nextPost;
+
+    public static PostDetailDto from(Post post, PostSummaryDto prev, PostSummaryDto next) {
         return new PostDetailDto(
                 post.getId(),
                 post.getTitle(),
                 post.getContent(),
                 post.getDescription(),
                 post.getCategory() != null ? post.getCategory().getName() : "카테고리 없음",
-                post.getCreatedAt().toString());
+                post.getCreatedAt().toString(),
+                prev,
+                next);
     }
 }

@@ -8,6 +8,6 @@ public interface UserCategoryService {
 
     List<CategoryListResponse> getAllCategories();
 
-    Long getCategoryIdByName(String name);
+    Long getCategoryIdBySlug(String slug);
 
 }
