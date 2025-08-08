@@ -10,21 +10,22 @@ import lombok.Getter;
 public class PostDetailDto {
     private final Long id;
     private final String title;
-    private final String content;
     private final String description;
-    private final String category;
+    private final String content;
+    private final PostCategoryDto postCategoryDto;
     private final String createdAt;
 
     private final PostSummaryDto previousPost;
     private final PostSummaryDto nextPost;
 
-    public static PostDetailDto from(Post post, PostSummaryDto prev, PostSummaryDto next) {
+    public static PostDetailDto from(Post post, PostCategoryDto postCategoryDto, PostSummaryDto prev,
+            PostSummaryDto next) {
         return new PostDetailDto(
                 post.getId(),
                 post.getTitle(),
-                post.getContent(),
                 post.getDescription(),
-                post.getCategory() != null ? post.getCategory().getName() : "카테고리 없음",
+                post.getContent(),
+                postCategoryDto,
                 post.getCreatedAt().toString(),
                 prev,
                 next);

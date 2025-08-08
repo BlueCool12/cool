@@ -49,6 +49,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("postId") Long postId,
             Pageable pageable);
 
+    @EntityGraph(attributePaths = { "category" })
     Optional<Post> findBySlug(String slug);
 
     @Query("""

@@ -1,6 +1,9 @@
 package com.pyomin.cool.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,13 +52,26 @@ public class UserCommentServiceImpl implements UserCommentService {
     public List<CommentListDto> getAllComments(Long postId) {
         List<Comment> comments = commentRepository.findAllByPostIdOrderByCreatedAtAsc(postId);
 
-        List<Comment> parent = comments.stream()
-                .filter(comment -> comment.getParent() == null)
-                .toList();
+        Map<Long, CommentListDto> dtoMap = new HashMap<>();
 
-        return parent.stream()
-                .map(CommentListDto::from)
-                .toList();
+        comments.forEach(comment -> {
+            CommentListDto dto = CommentListDto.fromSingle(comment);
+            dtoMap.put(comment.getId(), dto);
+        });
+
+        List<CommentListDto> result = new ArrayList<>();
+        for (Comment comment : comments) {
+            if (comment.getParent() == null) {
+                result.add(dtoMap.get(comment.getId()));
+            } else {
+                CommentListDto parentDto = dtoMap.get(comment.getParent().getId());
+                if (parentDto != null) {
+                    parentDto.getChildren().add(dtoMap.get(comment.getId()));
+                }
+            }
+        }
+
+        return result;
     }
 
     @Override
