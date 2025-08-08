@@ -10,9 +10,9 @@ import lombok.Getter;
 public class PostDetailResponse {
     private final Long id;
     private final String title;
-    private final String content;
     private final String description;
-    private final String category;
+    private final String content;
+    private final PostCategoryResponse category;
     private final String createdAt;
 
     private final PostSummaryResponse previousPost;
@@ -22,9 +22,9 @@ public class PostDetailResponse {
         return new PostDetailResponse(
                 dto.getId(),
                 dto.getTitle(),
-                dto.getContent(),
                 dto.getDescription(),
-                dto.getCategory(),
+                dto.getContent(),
+                PostCategoryResponse.from(dto.getPostCategoryDto()),
                 dto.getCreatedAt(),
                 dto.getPreviousPost() != null ? PostSummaryResponse.from(dto.getPreviousPost()) : null,
                 dto.getNextPost() != null ? PostSummaryResponse.from(dto.getNextPost()) : null);

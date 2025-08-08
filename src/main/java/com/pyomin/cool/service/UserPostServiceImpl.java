@@ -11,7 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import com.pyomin.cool.domain.Category;
 import com.pyomin.cool.domain.Post;
+import com.pyomin.cool.dto.user.PostCategoryDto;
 import com.pyomin.cool.dto.user.PostDetailDto;
 import com.pyomin.cool.dto.user.PostLatestDto;
 import com.pyomin.cool.dto.user.PostListDto;
@@ -56,6 +58,11 @@ public class UserPostServiceImpl implements UserPostService {
         Post post = postRepository.findBySlug(slug)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 
+        Category category = post.getCategory();
+        PostCategoryDto postCategoryDto = category != null
+                ? PostCategoryDto.from(category)
+                : new PostCategoryDto("카테고리 없음", "/");
+
         LocalDateTime createdAt = post.getCreatedAt();
         Long postId = post.getId();
 
@@ -65,7 +72,7 @@ public class UserPostServiceImpl implements UserPostService {
         PostSummaryDto prevDto = prev.isEmpty() ? null : PostSummaryDto.from(prev.get(0));
         PostSummaryDto nextDto = next.isEmpty() ? null : PostSummaryDto.from(next.get(0));
 
-        return PostDetailDto.from(post, prevDto, nextDto);
+        return PostDetailDto.from(post, postCategoryDto, prevDto, nextDto);
     }
 
     @Override

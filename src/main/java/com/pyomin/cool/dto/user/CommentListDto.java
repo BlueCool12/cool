@@ -1,6 +1,7 @@
 package com.pyomin.cool.dto.user;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,7 +21,7 @@ public class CommentListDto {
 
     @JsonProperty("isDeleted")
     private final boolean deleted;
-    
+
     private final LocalDateTime createdAt;
     private final List<CommentListDto> children;
 
@@ -35,4 +36,15 @@ public class CommentListDto {
                         .map(CommentListDto::from)
                         .collect(Collectors.toList()));
     }
+
+    public static CommentListDto fromSingle(Comment comment) {
+        return new CommentListDto(
+                comment.getId(),
+                comment.getNickname(),
+                comment.getContent(),
+                comment.isDeleted(),
+                comment.getCreatedAt(),
+                new ArrayList<>());
+    }
+
 }
