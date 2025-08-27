@@ -1,6 +1,6 @@
 package com.pyomin.cool.service;
 
-import com.pyomin.cool.dto.user.PageViewLogDto;
+import com.pyomin.cool.dto.PageViewLogDto;
 
 public interface PageViewService {
 

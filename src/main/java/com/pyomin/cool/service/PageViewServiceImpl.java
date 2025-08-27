@@ -3,7 +3,7 @@ package com.pyomin.cool.service;
 import org.springframework.stereotype.Service;
 
 import com.pyomin.cool.domain.PageView;
-import com.pyomin.cool.dto.user.PageViewLogDto;
+import com.pyomin.cool.dto.PageViewLogDto;
 import com.pyomin.cool.repository.PageViewRepository;
 
 import lombok.RequiredArgsConstructor;

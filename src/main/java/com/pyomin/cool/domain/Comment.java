@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.pyomin.cool.dto.user.CommentUpdateDto;
+import com.pyomin.cool.dto.CommentUpdateDto;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
