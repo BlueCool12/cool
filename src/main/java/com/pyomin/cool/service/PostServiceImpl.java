@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.pyomin.cool.domain.Category;
 import com.pyomin.cool.domain.Post;
+import com.pyomin.cool.domain.PostStatus;
 import com.pyomin.cool.dto.PostCategoryDto;
 import com.pyomin.cool.dto.PostDetailDto;
 import com.pyomin.cool.dto.PostLatestDto;
@@ -36,13 +37,13 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<PostListDto> getAllPosts(String category, Pageable pageable) {
-        Long categoryId = null;
+        Integer categoryId = null;
 
         if (category != null) {
             categoryId = categoryService.getCategoryIdBySlug(category);
         }
 
-        Page<Post> page = postRepository.findVisiblePosts(categoryId, pageable);
+        Page<Post> page = postRepository.findVisiblePosts(PostStatus.PUBLISHED, categoryId, pageable);
 
         return page.map(post -> PostListDto.of(post, summarize(post.getContent())));
     }
@@ -66,8 +67,8 @@ public class PostServiceImpl implements PostService {
         LocalDateTime createdAt = post.getCreatedAt();
         Long postId = post.getId();
 
-        List<Post> prev = postRepository.findPreviousPost(createdAt, postId, limitOne);
-        List<Post> next = postRepository.findNextPost(createdAt, postId, limitOne);
+        List<Post> prev = postRepository.findPreviousPost(PostStatus.PUBLISHED, createdAt, postId, limitOne);
+        List<Post> next = postRepository.findNextPost(PostStatus.PUBLISHED, createdAt, postId, limitOne);
 
         PostSummaryDto prevDto = prev.isEmpty() ? null : PostSummaryDto.from(prev.get(0));
         PostSummaryDto nextDto = next.isEmpty() ? null : PostSummaryDto.from(next.get(0));
@@ -90,7 +91,7 @@ public class PostServiceImpl implements PostService {
             return (List<PostLatestDto>) cached;
         }
 
-        List<Post> latestPosts = postRepository.findLatestPosts(PageRequest.of(0, 3));
+        List<Post> latestPosts = postRepository.findLatestPosts(PostStatus.PUBLISHED, PageRequest.of(0, 3));
 
         List<PostLatestDto> dtoList = latestPosts.stream()
                 .map(PostLatestDto::from)

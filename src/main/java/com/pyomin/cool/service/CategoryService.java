@@ -8,6 +8,6 @@ public interface CategoryService {
 
     List<CategoryListResponse> getAllCategories();
 
-    Long getCategoryIdBySlug(String slug);
+    Integer getCategoryIdBySlug(String slug);
 
 }
