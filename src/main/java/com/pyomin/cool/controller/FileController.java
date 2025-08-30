@@ -1,12 +1,16 @@
 package com.pyomin.cool.controller;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,28 +24,43 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/files")
-public class FileController {    
+public class FileController {
 
     @Value("${file.upload-dir}")
     private String uploadDir;
 
-    @GetMapping("/{yearMonth}/{fileName}")
-    public ResponseEntity<InputStreamResource> serverFile(
-            @PathVariable("yearMonth") String yearMonth,
+    @GetMapping("/{year:\\d{4}}/{month:\\d{2}}/{fileName:.+}")
+    public ResponseEntity<Resource> serverFile(
+            @PathVariable("year") String year,
+            @PathVariable("month") String month,
             @PathVariable("fileName") String fileName) throws IOException {
 
-        File file = new File(uploadDir + "/" + yearMonth + "/" + fileName);
+        Path base = Paths.get(uploadDir).toAbsolutePath().normalize();
+        Path path = base.resolve(Paths.get(year, month, fileName)).normalize();
 
-        if (!file.exists()) {
+        if (!path.startsWith(base)) {
+            return ResponseEntity.status(403).build();
+        }
+
+        File file = path.toFile();
+        if (!file.exists() || !file.isFile()) {
             return ResponseEntity.notFound().build();
         }
 
-        InputStream inputStream = new FileInputStream(file);
+        String mime = Files.probeContentType(path);
+        MediaType mediaType = (mime != null) ? MediaType.parseMediaType(mime) : resolvMediaType(fileName);
+
+        String cd = ContentDisposition.inline()
+                .filename(file.getName(), StandardCharsets.UTF_8)
+                .build()
+                .toString();
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=" + file.getName())
-                .contentType(resolvMediaType(fileName))
-                .body(new InputStreamResource(inputStream));
+                .header(HttpHeaders.CONTENT_DISPOSITION, cd)
+                .lastModified(file.lastModified())
+                .header(HttpHeaders.CACHE_CONTROL, "public, max-age=2592000")
+                .contentType(mediaType)
+                .body(new FileSystemResource(file));
     }
 
     private MediaType resolvMediaType(String fileName) {

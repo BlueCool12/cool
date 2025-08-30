@@ -2,15 +2,18 @@ package com.pyomin.cool.domain;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,16 +41,15 @@ public class Post {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id", nullable = true)
     private Category category;
 
-    @Column(nullable = false, columnDefinition = "boolean default false")
-    private boolean isPublic;
+    @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "status", nullable = false, columnDefinition = "post_status")
+    private PostStatus status;
 
-    @Column(nullable = false, columnDefinition = "boolean default false")
-    private boolean isDeleted;
-
-    @Column(nullable = false, length = 255, unique = true)
+    @Column(nullable = true, length = 255, unique = true)
     private String slug;
 
     @Column(nullable = false)
@@ -55,23 +57,4 @@ public class Post {
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    public void update(String title, String content, Category category, boolean isPublic) {
-        this.title = title;
-        this.content = content;        
-        this.category = category;
-        this.isPublic = isPublic;
-    }
-
 }
