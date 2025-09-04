@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,16 +31,18 @@ public class PostServiceImpl implements PostService {
     private final CategoryService categoryService;
 
     @Override
-    public Page<PostListDto> getAllPosts(String category, Pageable pageable) {
-        Integer categoryId = null;
+    @Transactional(readOnly = true)
+    public Slice<PostListDto> getAllPosts(String category, Pageable pageable) {
+        Slice<Post> slicedPosts = null;
 
-        if (category != null) {
-            categoryId = categoryService.getCategoryIdBySlug(category);
+        if (category == null) {
+            slicedPosts = postRepository.findPublishedPosts(PostStatus.PUBLISHED, pageable);
+        } else {
+            Integer categoryId = categoryService.getCategoryIdBySlug(category);
+            slicedPosts = postRepository.findPublishedPostsByCategory(PostStatus.PUBLISHED, categoryId, pageable);
         }
 
-        Page<Post> page = postRepository.findVisiblePosts(PostStatus.PUBLISHED, categoryId, pageable);
-
-        return page.map(post -> PostListDto.of(post, summarize(post.getContent())));
+        return slicedPosts.map(post -> PostListDto.of(post, summarize(post.getContent())));
     }
 
     private String summarize(String content) {
