@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,10 +20,18 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("""
                 SELECT p FROM Post p
                 WHERE p.status = :status
-                    AND (:categoryId IS NULL OR p.category.id = :categoryId)
-                ORDER BY p.createdAt DESC
+                ORDER BY p.createdAt DESC, p.id DESC
             """)
-    Page<Post> findVisiblePosts(@Param("status") PostStatus status,
+    Slice<Post> findPublishedPosts(@Param("status") PostStatus status, Pageable pageable);
+
+    @EntityGraph(attributePaths = { "category" })
+    @Query("""
+                SELECT p FROM Post p
+                WHERE p.status = :status
+                AND p.category.id = :categoryId
+                ORDER BY p.createdAt DESC, p.id DESC
+            """)
+    Slice<Post> findPublishedPostsByCategory(@Param("status") PostStatus status,
             @Param("categoryId") Integer categoryId,
             Pageable pageable);
 
