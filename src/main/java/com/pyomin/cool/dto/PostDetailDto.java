@@ -12,20 +12,20 @@ public class PostDetailDto {
     private final String title;
     private final String description;
     private final String content;
-    private final PostCategoryDto postCategoryDto;
+    private final CategoryDetailDto categoryDetailDto;
     private final String createdAt;
 
     private final PostSummaryDto previousPost;
     private final PostSummaryDto nextPost;
 
-    public static PostDetailDto from(Post post, PostCategoryDto postCategoryDto, PostSummaryDto prev,
+    public static PostDetailDto from(Post post, CategoryDetailDto categoryDetailDto, PostSummaryDto prev,
             PostSummaryDto next) {
         return new PostDetailDto(
                 post.getId(),
                 post.getTitle(),
                 post.getDescription(),
                 post.getContent(),
-                postCategoryDto,
+                categoryDetailDto,
                 post.getCreatedAt().toString(),
                 prev,
                 next);
