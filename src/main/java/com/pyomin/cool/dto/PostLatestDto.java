@@ -4,11 +4,9 @@ import com.pyomin.cool.domain.Post;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor(force = true)
 public class PostLatestDto {
 
     private final Long id;

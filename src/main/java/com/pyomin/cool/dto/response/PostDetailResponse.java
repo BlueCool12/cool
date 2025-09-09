@@ -12,7 +12,7 @@ public class PostDetailResponse {
     private final String title;
     private final String description;
     private final String content;
-    private final PostCategoryResponse category;
+    private final CategoryDetailResponse category;
     private final String createdAt;
 
     private final PostSummaryResponse previousPost;
@@ -24,7 +24,7 @@ public class PostDetailResponse {
                 dto.getTitle(),
                 dto.getDescription(),
                 dto.getContent(),
-                PostCategoryResponse.from(dto.getPostCategoryDto()),
+                CategoryDetailResponse.from(dto.getCategoryDetailDto()),
                 dto.getCreatedAt(),
                 dto.getPreviousPost() != null ? PostSummaryResponse.from(dto.getPreviousPost()) : null,
                 dto.getNextPost() != null ? PostSummaryResponse.from(dto.getNextPost()) : null);

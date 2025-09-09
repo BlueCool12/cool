@@ -13,9 +13,9 @@ import com.pyomin.cool.dto.PostListDto;
 public interface PostService {
     Slice<PostListDto> getAllPosts(String category, Pageable page);
 
-    PostDetailDto getPostBySlug(String slug, Pageable limitOne);
-
-    Post getPostOrThrow(Long postId);
+    PostDetailDto getPostBySlug(String slug);
 
     List<PostLatestDto> getLatestPosts();
+    
+    Post getPostOrThrow(Long postId);
 }

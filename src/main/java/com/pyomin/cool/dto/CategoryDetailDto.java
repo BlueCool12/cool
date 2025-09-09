@@ -7,11 +7,11 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class PostCategoryDto {
+public class CategoryDetailDto {
     private final String name;
     private final String slug;
 
-    public static PostCategoryDto from(Category category) {
-        return new PostCategoryDto(category.getName(), category.getSlug());
+    public static CategoryDetailDto from(Category category) {
+        return new CategoryDetailDto(category.getName(), category.getSlug());
     }
 }

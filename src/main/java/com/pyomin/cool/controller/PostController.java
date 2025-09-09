@@ -1,9 +1,7 @@
 package com.pyomin.cool.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
@@ -41,8 +39,7 @@ public class PostController {
 
     @GetMapping("/{slug}")
     public PostDetailResponse getPostBySlug(@PathVariable("slug") String slug) {
-        Pageable limitOne = PageRequest.of(0, 1);
-        PostDetailDto postDetailDto = userPostService.getPostBySlug(slug, limitOne);
+        PostDetailDto postDetailDto = userPostService.getPostBySlug(slug);
         return PostDetailResponse.from(postDetailDto);
     }
 
@@ -50,7 +47,7 @@ public class PostController {
     public List<PostLatestResponse> getLatestPosts() {
         return userPostService.getLatestPosts().stream()
                 .map(PostLatestResponse::from)
-                .collect(Collectors.toList());
+                .toList();
     }
 
 }

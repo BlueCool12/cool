@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.pyomin.cool.domain.Post;
 import com.pyomin.cool.domain.PostStatus;
+import com.pyomin.cool.dto.PostSummaryDto;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
@@ -36,36 +37,43 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             Pageable pageable);
 
     @Query("""
-            SELECT p FROM Post p
+            SELECT new com.pyomin.cool.dto.PostSummaryDto(p.slug, p.title)
+            FROM Post p
             WHERE p.status = :status
             AND (p.createdAt < :createdAt OR (p.createdAt = :createdAt AND p.id < :postId))
             ORDER BY p.createdAt DESC, p.id DESC
             """)
-    List<Post> findPreviousPost(
+    List<PostSummaryDto> findPreviousPost(
             @Param("status") PostStatus status,
             @Param("createdAt") LocalDateTime createdAt,
             @Param("postId") Long postId,
             Pageable pageable);
 
     @Query("""
-            SELECT p FROM Post p
+            SELECT new com.pyomin.cool.dto.PostSummaryDto(p.slug, p.title)
+            FROM Post p
             WHERE p.status = :status
             AND (p.createdAt > :createdAt OR (p.createdAt = :createdAt AND p.id > :postId))
             ORDER BY p.createdAt ASC, p.id ASC
             """)
-    List<Post> findNextPost(
+    List<PostSummaryDto> findNextPost(
             @Param("status") PostStatus status,
             @Param("createdAt") LocalDateTime createdAt,
             @Param("postId") Long postId,
             Pageable pageable);
 
-    @EntityGraph(attributePaths = { "category" })
-    Optional<Post> findBySlug(String slug);
+    @Query("""
+            SELECT p
+            FROM Post p
+            JOIN FETCH p.category c
+            WHERE p.slug = :slug AND p.status = :status
+            """)
+    Optional<Post> findBySlugAndStatus(@Param("slug") String slug, @Param("status") PostStatus status);
 
     @Query("""
             SELECT p FROM Post p
             WHERE p.status = :status
-            ORDER BY p.createdAt DESC
+            ORDER BY p.createdAt DESC, p.id DESC
             """)
     List<Post> findLatestPosts(@Param("status") PostStatus status, Pageable pageable);
 }
