@@ -2,6 +2,7 @@ package com.pyomin.cool.service;
 
 import java.util.List;
 
+import com.pyomin.cool.dto.SitemapDto;
 import com.pyomin.cool.dto.response.CategoryListResponse;
 
 public interface CategoryService {
@@ -10,4 +11,5 @@ public interface CategoryService {
 
     Integer getCategoryIdBySlug(String slug);
 
+    List<SitemapDto<String>> getCategorySitemap();
 }

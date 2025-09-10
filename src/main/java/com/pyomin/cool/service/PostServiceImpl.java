@@ -16,6 +16,7 @@ import com.pyomin.cool.dto.CategoryDetailDto;
 import com.pyomin.cool.dto.PostDetailDto;
 import com.pyomin.cool.dto.PostLatestDto;
 import com.pyomin.cool.dto.PostListDto;
+import com.pyomin.cool.dto.SitemapDto;
 import com.pyomin.cool.dto.PostSummaryDto;
 import com.pyomin.cool.exception.ResourceNotFoundException;
 import com.pyomin.cool.repository.PostRepository;
@@ -85,9 +86,15 @@ public class PostServiceImpl implements PostService {
                 .collect(Collectors.toList());
     }
 
-    @Override    
+    @Override
     public Post getPostOrThrow(Long postId) {
         return postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("게시글(id: " + postId + ")을 찾을 수 없습니다."));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SitemapDto<String>> getPostSitemap() {
+        return postRepository.findAllForSitemap(PostStatus.PUBLISHED);
     }
 }

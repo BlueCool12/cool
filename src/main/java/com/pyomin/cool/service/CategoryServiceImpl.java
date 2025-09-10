@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.pyomin.cool.domain.PostStatus;
+import com.pyomin.cool.dto.SitemapDto;
 import com.pyomin.cool.dto.response.CategoryListResponse;
 import com.pyomin.cool.repository.CategoryRepository;
 
@@ -34,4 +36,9 @@ public class CategoryServiceImpl implements CategoryService {
                 .getId();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<SitemapDto<String>> getCategorySitemap() {
+        return categoryRepository.findAllForSitemap(PostStatus.PUBLISHED);
+    }
 }

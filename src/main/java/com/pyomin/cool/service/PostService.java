@@ -9,6 +9,7 @@ import com.pyomin.cool.domain.Post;
 import com.pyomin.cool.dto.PostDetailDto;
 import com.pyomin.cool.dto.PostLatestDto;
 import com.pyomin.cool.dto.PostListDto;
+import com.pyomin.cool.dto.SitemapDto;
 
 public interface PostService {
     Slice<PostListDto> getAllPosts(String category, Pageable page);
@@ -16,6 +17,8 @@ public interface PostService {
     PostDetailDto getPostBySlug(String slug);
 
     List<PostLatestDto> getLatestPosts();
-    
+
     Post getPostOrThrow(Long postId);
+
+    List<SitemapDto<String>> getPostSitemap();
 }

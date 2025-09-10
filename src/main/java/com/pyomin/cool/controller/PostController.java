@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pyomin.cool.dto.PostDetailDto;
+import com.pyomin.cool.dto.SitemapDto;
 import com.pyomin.cool.dto.response.SliceResponse;
 import com.pyomin.cool.dto.response.PostDetailResponse;
 import com.pyomin.cool.dto.response.PostLatestResponse;
 import com.pyomin.cool.dto.response.PostListResponse;
+import com.pyomin.cool.dto.response.SitemapResponse;
 import com.pyomin.cool.service.PostService;
 
 import lombok.RequiredArgsConstructor;
@@ -25,13 +27,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PostController {
 
-    private final PostService userPostService;
+    private final PostService postService;
 
     @GetMapping
     public SliceResponse<PostListResponse> list(
             @RequestParam(name = "category", required = false) String category,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
-        Slice<PostListResponse> slice = userPostService.getAllPosts(category, pageable)
+        Slice<PostListResponse> slice = postService.getAllPosts(category, pageable)
                 .map(PostListResponse::from);
 
         return SliceResponse.from(slice);
@@ -39,15 +41,19 @@ public class PostController {
 
     @GetMapping("/{slug}")
     public PostDetailResponse getPostBySlug(@PathVariable("slug") String slug) {
-        PostDetailDto postDetailDto = userPostService.getPostBySlug(slug);
+        PostDetailDto postDetailDto = postService.getPostBySlug(slug);
         return PostDetailResponse.from(postDetailDto);
     }
 
     @GetMapping("/latest")
     public List<PostLatestResponse> getLatestPosts() {
-        return userPostService.getLatestPosts().stream()
+        return postService.getLatestPosts().stream()
                 .map(PostLatestResponse::from)
                 .toList();
     }
 
+    @GetMapping("/sitemap")
+    public SitemapResponse<SitemapDto<String>> sitemap() {
+        return SitemapResponse.from(postService.getPostSitemap());
+    }
 }

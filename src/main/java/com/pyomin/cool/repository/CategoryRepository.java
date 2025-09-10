@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.pyomin.cool.domain.Category;
+import com.pyomin.cool.domain.PostStatus;
+import com.pyomin.cool.dto.SitemapDto;
 
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
@@ -14,4 +16,13 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
     List<Category> findAllCategories();
 
     Optional<Category> findBySlug(String slug);
+
+    @Query("""
+            SELECT new com.pyomin.cool.dto.SitemapDto(c.slug, MAX(COALESCE(p.updatedAt, p.createdAt)))
+            FROM Category c
+            LEFT JOIN c.posts p ON p.status = :status
+            WHERE c.parent IS NOT NULL
+            GROUP BY c.slug
+            """)
+    List<SitemapDto<String>> findAllForSitemap(PostStatus status);
 }

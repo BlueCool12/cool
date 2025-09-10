@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.pyomin.cool.domain.Post;
 import com.pyomin.cool.domain.PostStatus;
+import com.pyomin.cool.dto.SitemapDto;
 import com.pyomin.cool.dto.PostSummaryDto;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
@@ -76,4 +77,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             ORDER BY p.createdAt DESC, p.id DESC
             """)
     List<Post> findLatestPosts(@Param("status") PostStatus status, Pageable pageable);
+
+    @Query("""
+            SELECT new com.pyomin.cool.dto.SitemapDto(p.slug, COALESCE(p.updatedAt, p.createdAt))
+            FROM Post p
+            WHERE p.status = :status
+            ORDER BY COALESCE(p.updatedAt, p.createdAt) DESC, p.id DESC
+            """)
+    List<SitemapDto<String>> findAllForSitemap(PostStatus status);
 }
