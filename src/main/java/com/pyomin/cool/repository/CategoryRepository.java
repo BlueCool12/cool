@@ -8,12 +8,18 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.pyomin.cool.domain.Category;
 import com.pyomin.cool.domain.PostStatus;
+import com.pyomin.cool.dto.CategoryListDto;
 import com.pyomin.cool.dto.SitemapDto;
 
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
-    @Query("SELECT DISTINCT c FROM Category c LEFT JOIN FETCH c.children WHERE c.parent IS NULL ORDER BY c.createdAt ASC")
-    List<Category> findAllCategories();
+    @Query("""
+            SELECT new com.pyomin.cool.dto.CategoryListDto(c.id, c.name, c.slug, p.id)
+            FROM Category c 
+            LEFT JOIN c.parent p
+            ORDER BY c.createdAt ASC
+            """)
+    List<CategoryListDto> findAllForTree();
 
     Optional<Category> findBySlug(String slug);
 
