@@ -54,14 +54,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Integer getCategoryIdBySlug(String slug) {
-        return categoryRepository.findBySlug(slug)
-                .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다: " + slug))
-                .getId();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List<SitemapDto<String>> getCategorySitemap() {
         return categoryRepository.findAllForSitemap(PostStatus.PUBLISHED);
     }

@@ -19,23 +19,15 @@ import com.pyomin.cool.dto.PostSummaryDto;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     @EntityGraph(attributePaths = { "category" })
-    @Query("""
-                SELECT p FROM Post p
-                WHERE p.status = :status
-                ORDER BY p.createdAt DESC, p.id DESC
-            """)
-    Slice<Post> findPublishedPosts(@Param("status") PostStatus status, Pageable pageable);
+    Slice<Post> findByStatus(PostStatus status, Pageable pageable);
 
-    @EntityGraph(attributePaths = { "category" })
     @Query("""
-                SELECT p FROM Post p
-                WHERE p.status = :status
-                AND p.category.id = :categoryId
-                ORDER BY p.createdAt DESC, p.id DESC
+            SELECT p
+            FROM Post p
+            JOIN FETCH p.category c
+            WHERE p.status = :status AND c.slug = :slug
             """)
-    Slice<Post> findPublishedPostsByCategory(@Param("status") PostStatus status,
-            @Param("categoryId") Integer categoryId,
-            Pageable pageable);
+    Slice<Post> findByStatusAndCategory_Slug(PostStatus status, String slug, Pageable pageable);
 
     @Query("""
             SELECT new com.pyomin.cool.dto.PostSummaryDto(p.slug, p.title)

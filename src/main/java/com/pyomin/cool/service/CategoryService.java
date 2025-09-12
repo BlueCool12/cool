@@ -7,9 +7,7 @@ import com.pyomin.cool.dto.response.CategoryListResponse;
 
 public interface CategoryService {
 
-    List<CategoryListResponse> getAllCategories();
-
-    Integer getCategoryIdBySlug(String slug);
+    List<CategoryListResponse> getAllCategories();    
 
     List<SitemapDto<String>> getCategorySitemap();
 }

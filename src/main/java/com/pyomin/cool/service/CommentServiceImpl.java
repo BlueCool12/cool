@@ -13,8 +13,12 @@ import com.pyomin.cool.domain.Post;
 import com.pyomin.cool.dto.CommentCreateDto;
 import com.pyomin.cool.dto.CommentListDto;
 import com.pyomin.cool.dto.CommentUpdateDto;
+import com.pyomin.cool.exception.ResourceNotFoundException;
 import com.pyomin.cool.repository.CommentRepository;
+import com.pyomin.cool.repository.PostRepository;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -22,33 +26,34 @@ import lombok.RequiredArgsConstructor;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
+    private final PostRepository postRepository;
 
-    private final PostService postService;
+    @PersistenceContext
+    private EntityManager em;
 
     @Override
     @Transactional
     public void createComment(CommentCreateDto dto) {
-
-        Post post = postService.getPostOrThrow(dto.getPostId());
-
-        Comment parent = null;
-        if (dto.getParentId() != null) {
-            parent = commentRepository.findById(dto.getParentId())
-                    .orElseThrow(() -> new IllegalArgumentException("부모 댓글이 존재하지 않습니다."));
+        Long postId = dto.getPostId();
+        if (!postRepository.existsById(postId)) {
+            throw new ResourceNotFoundException("게시글(id: " + postId + ")이 존재하지 않습니다.");
         }
 
-        String nickname = sanitizeNickname(dto.getNickname());
-
-        String password = dto.getPassword();
-        if (password == null || !password.matches("\\d{4}")) {
-            throw new IllegalArgumentException("비밀번호는 숫자 4자리여야 합니다.");
+        Long parentId = dto.getParentId();
+        if (parentId != null && !commentRepository.existsByIdAndPostId(parentId, postId)) {
+            throw new ResourceNotFoundException(
+                    "부모 댓글(id: " + parentId + ")이 존재하지 않거나 해당 게시글(id: " + postId + ")의 댓글이 아닙니다.");
         }
 
-        Comment comment = new Comment(post, parent, nickname, password, dto.getContent());
+        Post postRef = em.getReference(Post.class, postId);
+        Comment parentRef = (parentId == null) ? null : em.getReference(Comment.class, parentId);
+
+        Comment comment = new Comment(postRef, parentRef, dto.getNickname(), dto.getPassword(), dto.getContent());
         commentRepository.save(comment);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CommentListDto> getAllComments(Long postId) {
         List<Comment> comments = commentRepository.findAllByPostIdOrderByCreatedAtAsc(postId);
 
@@ -77,8 +82,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void deleteComment(Long id, String password) {
-        Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
+        Comment comment = getCommentByIdOrThrow(id);
 
         if (!comment.getPassword().equals(password)) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
@@ -87,23 +91,21 @@ public class CommentServiceImpl implements CommentService {
         comment.delete();
     }
 
-    private String sanitizeNickname(String nickname) {
-        return (nickname == null || nickname.trim().isEmpty()) ? "익명" : nickname.trim();
-    }
-
     @Override
+    @Transactional(readOnly = true)
     public boolean verifyCommentPassword(Long commentId, String password) {
-        return commentRepository.findById(commentId)
-                .map(comment -> comment.getPassword().equals(password))
-                .orElse(false);
+        return commentRepository.existsByIdAndPassword(commentId, password);
     }
 
     @Override
     @Transactional
     public void updateComment(CommentUpdateDto dto) {
-        Comment comment = commentRepository.findById(dto.getId())
-                .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
-
+        Comment comment = getCommentByIdOrThrow(dto.getId());
         comment.update(dto);
+    }
+
+    private Comment getCommentByIdOrThrow(Long id) {
+        return commentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("댓글(id: " + id + ")이 존재하지 않습니다."));
     }
 }
