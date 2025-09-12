@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.pyomin.cool.domain.Post;
 import com.pyomin.cool.domain.PostStatus;
@@ -29,23 +30,18 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
 
-    private final CategoryService categoryService;
-
     private static final Pageable LIMIT_ONE = PageRequest.of(0, 1);
 
     @Override
     @Transactional(readOnly = true)
     public Slice<PostListDto> getAllPosts(String category, Pageable pageable) {
-        Slice<Post> slicedPosts = null;
+        final boolean hasCategory = StringUtils.hasText(category);
 
-        if (category == null) {
-            slicedPosts = postRepository.findPublishedPosts(PostStatus.PUBLISHED, pageable);
-        } else {
-            Integer categoryId = categoryService.getCategoryIdBySlug(category);
-            slicedPosts = postRepository.findPublishedPostsByCategory(PostStatus.PUBLISHED, categoryId, pageable);
-        }
+        Slice<Post> posts = hasCategory
+                ? postRepository.findByStatusAndCategory_Slug(PostStatus.PUBLISHED, category, pageable)
+                : postRepository.findByStatus(PostStatus.PUBLISHED, pageable);
 
-        return slicedPosts.map(post -> PostListDto.of(post, summarize(post.getContent())));
+        return posts.map(post -> PostListDto.of(post, summarize(post.getContent())));
     }
 
     private static String summarize(String content) {
@@ -84,12 +80,6 @@ public class PostServiceImpl implements PostService {
         return latestPosts.stream()
                 .map(PostLatestDto::from)
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public Post getPostOrThrow(Long postId) {
-        return postRepository.findById(postId)
-                .orElseThrow(() -> new ResourceNotFoundException("게시글(id: " + postId + ")을 찾을 수 없습니다."));
     }
 
     @Override
