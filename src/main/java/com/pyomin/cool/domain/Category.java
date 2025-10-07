@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.annotations.CreationTimestamp;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -27,10 +25,10 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, length = 20, unique = true)
     private String name;
 
-    @Column(nullable = false, unique = true, length = 20)
+    @Column(nullable = false, length = 20, unique = true)
     private String slug;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -42,15 +40,7 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     private List<Post> posts = new ArrayList<>();
-
-    @CreationTimestamp
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
-
-    public static Category create(String name, Category parent) {
-        Category c = new Category();
-        c.name = name;
-        c.parent = parent;
-        return c;
-    }
+    
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;    
 }
