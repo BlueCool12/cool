@@ -24,7 +24,7 @@ public class PostListDto {
                 post.getDescription(),
                 post.getCategory() != null ? post.getCategory().getName() : null,
                 post.getSlug(),
-                post.getCoverImage() != null ? "https://api.pyomin.com/files/" + post.getCoverImage().getPath() : null,
+                post.getCoverImage() != null ? "https://bluecool.pyomin.com/api/v1/files/" + post.getCoverImage().getPath() : null,
                 post.getCreatedAt().toString(),
                 post.getUpdatedAt().toString());
     }
