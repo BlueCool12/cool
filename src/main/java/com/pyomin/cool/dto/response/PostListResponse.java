@@ -14,6 +14,7 @@ public class PostListResponse {
     private final String description;
     private final String category;
     private final String slug;
+    private final String coverPath;
     private final String createdAt;
     private final String updatedAt;
 
@@ -24,6 +25,7 @@ public class PostListResponse {
                 dto.getDescription(),
                 dto.getCategory(),
                 dto.getSlug(),
+                dto.getCoverPath(),
                 dto.getCreatedAt(),
                 dto.getUpdatedAt());
     }

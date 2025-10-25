@@ -9,13 +9,19 @@ spring:
     url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
-    driver-class-name: org.postgresql.Driver
+    driver-class-name: org.postgresql.Driver  
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
 
   data:
     redis:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
-      password: ${REDIS_PASSWORD}  
+      password: ${REDIS_PASSWORD}      
 
   jpa:
     hibernate:
@@ -23,14 +29,14 @@ spring:
     open-in-view: false           
     show-sql: false
     properties:
-      hibernate:
-        format_sql: false
-        highlight_sql: false
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+      hibernate:                
+        default_batch_fetch_size: 100
         jdbc:
           time_zone: Asia/Seoul
+        lob:
+          non_contextual_creation: true
         type:
-          preferred_enum_type: postgres_enum
+          preferred_enum_type: postgres_enum    
 
   jackson:
     time-zone: Asia/Seoul

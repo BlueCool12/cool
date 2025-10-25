@@ -1,10 +1,13 @@
 package com.pyomin.cool.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,6 +18,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,10 +39,10 @@ public class Post {
     @Column(nullable = false, length = 255)
     private String title;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = false, columnDefinition = "text")
     private String content;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(nullable = true, columnDefinition = "text")
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -47,15 +51,27 @@ public class Post {
 
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-    @Column(name = "status", nullable = false, columnDefinition = "post_status")
+    @Column(nullable = false, columnDefinition = "post_status")
     private PostStatus status;
 
     @Column(nullable = true, length = 255, unique = true)
     private String slug;
 
-    @Column(nullable = false)
+    @Builder.Default    
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostImage> postImages = new ArrayList<>();
+
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    public Image getCoverImage() {
+        return postImages.stream()
+                .filter(PostImage::getIsCover)
+                .map(PostImage::getImage)
+                .findFirst()
+                .orElse(null);
+    }
 }

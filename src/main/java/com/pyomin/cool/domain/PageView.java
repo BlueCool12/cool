@@ -7,7 +7,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,8 +29,8 @@ public class PageView {
 
     @Column(name = "ip_address", length = 45)
     private String ipAddress;
-
-    @Column(name = "user_agent", columnDefinition = "TEXT")
+    
+    @Column(name = "user_agent", columnDefinition = "text")
     private String userAgent;
 
     @Column(name = "device_type", length = 20)
@@ -40,11 +39,7 @@ public class PageView {
     @Column(name = "session_id", length = 64)
     private String sessionId;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
 }
