@@ -7,7 +7,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,9 +29,8 @@ public class PageView {
 
     @Column(name = "ip_address", length = 45)
     private String ipAddress;
-
-    @Lob
-    @Column(name = "user_agent")
+    
+    @Column(name = "user_agent", columnDefinition = "text")
     private String userAgent;
 
     @Column(name = "device_type", length = 20)
