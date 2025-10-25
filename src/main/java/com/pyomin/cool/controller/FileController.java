@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/files")
+@RequestMapping("api/v1/files")
 public class FileController {
 
     @Value("${file.upload-dir}")
