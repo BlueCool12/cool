@@ -37,7 +37,7 @@ public class PageView {
     @Column(length = 255)
     private String referrer;
 
-    @Column(name = "ip_address", length = 45)
+    @Column(name = "ip_address", length = 255)
     private String ipAddress;
 
     @Column(name = "user_agent", columnDefinition = "text")
