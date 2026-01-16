@@ -31,6 +31,9 @@ public class PageView {
     @Column(nullable = false, length = 255)
     private String url;
 
+    @Column(length = 150)
+    private String slug;
+
     @Column(length = 255)
     private String referrer;
 

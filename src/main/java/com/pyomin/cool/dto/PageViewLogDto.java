@@ -7,28 +7,28 @@ import lombok.Getter;
 @Builder
 public class PageViewLogDto {
     private String url;
+    private String slug;
     private String referrer;
     private String ipAddress;
     private String userAgent;
     private String sessionId;
     private String deviceType;
-    private String slug;
 
     public static PageViewLogDto of(
             String url,
+            String slug,
             String referrer,
             String ipAddress,
             String userAgent,
-            String sessionId,
-            String slug) {
+            String sessionId) {
         return PageViewLogDto.builder()
                 .url(url)
+                .slug(slug)
                 .referrer(referrer != null ? referrer.trim() : "")
                 .ipAddress(ipAddress != null ? ipAddress : "")
                 .userAgent(userAgent != null ? userAgent : "")
                 .sessionId(sessionId != null ? sessionId : "")
                 .deviceType(resolveDeviceType(userAgent))
-                .slug(slug)
                 .build();
     }
 

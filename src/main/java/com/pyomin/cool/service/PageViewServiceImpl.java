@@ -24,6 +24,7 @@ public class PageViewServiceImpl implements PageViewService {
 
         PageView pageView = PageView.builder()
                 .url(dto.getUrl())
+                .slug(dto.getSlug())
                 .referrer(dto.getReferrer())
                 .ipAddress(dto.getIpAddress())
                 .userAgent(dto.getUserAgent())
@@ -31,7 +32,7 @@ public class PageViewServiceImpl implements PageViewService {
                 .deviceType(dto.getDeviceType())
                 .build();
 
-        pageViewRepository.save(pageView);
+        pageViewRepository.save(pageView);        
 
         if (dto.getSlug() != null && !dto.getSlug().isBlank()) {
             postRepository.incrementViewCountBySlug(dto.getSlug());
