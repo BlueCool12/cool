@@ -5,4 +5,5 @@ import lombok.Getter;
 @Getter
 public class PageViewLogRequest {
     private String url;
+    private String slug;
 }
