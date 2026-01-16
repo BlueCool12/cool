@@ -57,6 +57,10 @@ public class Post {
     @Column(nullable = true, length = 255, unique = true)
     private String slug;
 
+    @Builder.Default
+    @Column(name = "view_count", nullable = false)
+    private Integer viewCount = 0;
+
     @Builder.Default    
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostImage> postImages = new ArrayList<>();

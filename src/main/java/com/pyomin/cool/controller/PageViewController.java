@@ -45,7 +45,7 @@ public class PageViewController {
         String sessionId = Optional.ofNullable(request.getHeader("X-Session-Id"))
                 .orElseGet(() -> getSessionIdFromCookie((request)));
 
-        PageViewLogDto dto = PageViewLogDto.of(body.getUrl(), referrer, ipAddress, userAgent, sessionId);
+        PageViewLogDto dto = PageViewLogDto.of(body.getUrl(), referrer, ipAddress, userAgent, sessionId, body.getSlug());
         pageViewService.logPageView(dto);
     }
 

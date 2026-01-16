@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.pyomin.cool.domain.PageView;
 import com.pyomin.cool.dto.PageViewLogDto;
 import com.pyomin.cool.repository.PageViewRepository;
+import com.pyomin.cool.repository.PostRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 public class PageViewServiceImpl implements PageViewService {
 
     private final PageViewRepository pageViewRepository;
+    private final PostRepository postRepository;
 
     public void logPageView(PageViewLogDto dto) {
 
@@ -30,5 +32,9 @@ public class PageViewServiceImpl implements PageViewService {
                 .build();
 
         pageViewRepository.save(pageView);
+
+        if (dto.getSlug() != null && !dto.getSlug().isBlank()) {
+            postRepository.incrementViewCountBySlug(dto.getSlug());
+        }
     }
 }

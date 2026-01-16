@@ -12,13 +12,15 @@ public class PageViewLogDto {
     private String userAgent;
     private String sessionId;
     private String deviceType;
+    private String slug;
 
     public static PageViewLogDto of(
             String url,
             String referrer,
             String ipAddress,
             String userAgent,
-            String sessionId) {
+            String sessionId,
+            String slug) {
         return PageViewLogDto.builder()
                 .url(url)
                 .referrer(referrer != null ? referrer.trim() : "")
@@ -26,6 +28,7 @@ public class PageViewLogDto {
                 .userAgent(userAgent != null ? userAgent : "")
                 .sessionId(sessionId != null ? sessionId : "")
                 .deviceType(resolveDeviceType(userAgent))
+                .slug(slug)
                 .build();
     }
 

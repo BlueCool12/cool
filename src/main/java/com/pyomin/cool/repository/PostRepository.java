@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -78,4 +79,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             ORDER BY COALESCE(p.updatedAt, p.createdAt) DESC, p.id DESC
             """)
     List<SitemapDto<String>> findAllForSitemap(PostStatus status);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Post p SET p.viewCount = p.viewCount + 1 WHERE p.slug = :slug")
+    void incrementViewCountBySlug(@Param("slug") String slug);
 }
