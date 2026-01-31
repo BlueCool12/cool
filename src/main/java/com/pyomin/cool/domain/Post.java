@@ -3,7 +3,6 @@ package com.pyomin.cool.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -27,7 +26,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @Builder
-@Immutable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Post extends BaseEntity {
