@@ -29,14 +29,15 @@ public class FileController {
     @Value("${file.upload-dir}")
     private String uploadDir;
 
-    @GetMapping("/{year:\\d{4}}/{month:\\d{2}}/{fileName:.+}")
+    @GetMapping("/{type}/{year:\\d{4}}/{month:\\d{2}}/{fileName:.+}")
     public ResponseEntity<Resource> serverFile(
+            @PathVariable("type") String type,
             @PathVariable("year") String year,
             @PathVariable("month") String month,
             @PathVariable("fileName") String fileName) throws IOException {
 
         Path base = Paths.get(uploadDir).toAbsolutePath().normalize();
-        Path path = base.resolve(Paths.get(year, month, fileName)).normalize();
+        Path path = base.resolve(Paths.get(type, year, month, fileName)).normalize();
 
         if (!path.startsWith(base)) {
             return ResponseEntity.status(403).build();

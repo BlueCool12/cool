@@ -3,10 +3,10 @@ package com.pyomin.cool.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -27,6 +27,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @Builder
+@Immutable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Post extends BaseEntity {
@@ -60,15 +61,20 @@ public class Post extends BaseEntity {
     @Column(name = "view_count", nullable = false)
     private Integer viewCount = 0;
 
-    @Builder.Default    
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostImage> postImages = new ArrayList<>();    
+    @Builder.Default
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private List<Media> medias = new ArrayList<>();
 
-    public Image getCoverImage() {
-        return postImages.stream()
-                .filter(PostImage::getIsCover)
-                .map(PostImage::getImage)
+    public String getCoverImageStoredName() {
+        if (this.medias == null || this.medias.isEmpty()) {
+            return null;
+        }
+
+        return this.medias.stream()
+                .filter(media -> media.getType() == MediaType.IMAGE)
                 .findFirst()
+                .map(Media::getStoredName)
                 .orElse(null);
     }
 }

@@ -38,8 +38,8 @@ public class PostServiceImpl implements PostService {
         final boolean hasCategory = StringUtils.hasText(category);
 
         Slice<Post> posts = hasCategory
-                ? postRepository.findByStatusAndCategory_Slug(PostStatus.PUBLISHED, category, pageable)
-                : postRepository.findByStatus(PostStatus.PUBLISHED, pageable);
+                ? postRepository.findByCategory(category, pageable)
+                : postRepository.findAllPublished(pageable);
 
         return posts.map(post -> PostListDto.of(post, summarize(post.getContent())));
     }
@@ -53,7 +53,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional(readOnly = true)
     public PostDetailDto getPostBySlug(String slug) {
-        Post post = postRepository.findBySlugAndStatus(slug, PostStatus.PUBLISHED)
+        Post post = postRepository.findBySlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("게시글(slug: " + slug + ")을 찾을 수 없습니다."));
 
         PostSummaryDto prevDto = findPrev(post).orElse(null);

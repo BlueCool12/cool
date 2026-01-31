@@ -17,14 +17,20 @@ public class PostListDto {
     private final String createdAt;
     private final String updatedAt;
 
-    public static PostListDto of(Post post, String summary) {        
+    public static PostListDto of(Post post, String summary) {
+
+        String storedName = post.getCoverImageStoredName();
+        String fullCoverPath = (storedName != null)
+                ? "https://api.pyomin.com/files/" + storedName
+                : null;
+
         return new PostListDto(
                 post.getTitle(),
                 summary,
                 post.getDescription(),
                 post.getCategory() != null ? post.getCategory().getName() : null,
                 post.getSlug(),
-                post.getCoverImage() != null ? "https://api.pyomin.com/files/" + post.getCoverImage().getPath() : null,
+                fullCoverPath,
                 post.getCreatedAt().toString(),
                 post.getUpdatedAt().toString());
     }
