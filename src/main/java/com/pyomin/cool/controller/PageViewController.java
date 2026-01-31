@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/page-view")
+@RequestMapping("/page-view")
 public class PageViewController {
 
     private final PageViewService pageViewService;

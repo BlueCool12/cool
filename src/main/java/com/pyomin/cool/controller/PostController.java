@@ -24,7 +24,7 @@ import com.pyomin.cool.service.PostService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/posts")
+@RequestMapping("/posts")
 @RequiredArgsConstructor
 public class PostController {
 
