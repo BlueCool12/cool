@@ -1,13 +1,12 @@
 package com.pyomin.cool.domain;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -28,9 +27,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @Builder
+@Immutable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Post {
+public class Post extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,21 +61,20 @@ public class Post {
     @Column(name = "view_count", nullable = false)
     private Integer viewCount = 0;
 
-    @Builder.Default    
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostImage> postImages = new ArrayList<>();
+    @Builder.Default
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private List<Media> medias = new ArrayList<>();
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    public String getCoverImageStoredName() {
+        if (this.medias == null || this.medias.isEmpty()) {
+            return null;
+        }
 
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
-    public Image getCoverImage() {
-        return postImages.stream()
-                .filter(PostImage::getIsCover)
-                .map(PostImage::getImage)
+        return this.medias.stream()
+                .filter(media -> media.getType() == MediaType.IMAGE)
                 .findFirst()
+                .map(Media::getStoredName)
                 .orElse(null);
     }
 }

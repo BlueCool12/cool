@@ -17,7 +17,10 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
             SELECT new com.pyomin.cool.dto.CategoryListDto(c.id, c.name, c.slug, p.id)
             FROM Category c 
             LEFT JOIN c.parent p
-            ORDER BY c.createdAt ASC
+            ORDER BY 
+                p.id ASC NULLS FIRST,
+                c.sortOrder ASC,
+                c.id ASC
             """)
     List<CategoryListDto> findAllForTree();
 

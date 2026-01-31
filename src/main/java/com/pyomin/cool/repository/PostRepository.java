@@ -1,6 +1,6 @@
 package com.pyomin.cool.repository;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,17 +20,18 @@ import com.pyomin.cool.dto.PostSummaryDto;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    @EntityGraph(attributePaths = { "category", "postImages", "postImages.image" })
-    Slice<Post> findByStatus(PostStatus status, Pageable pageable);
+    @EntityGraph(attributePaths = { "category", "medias" })
+    @Query("SELECT p FROM Post p WHERE p.status = 'PUBLISHED'")
+    Slice<Post> findAllPublished(Pageable pageable);
 
-    @EntityGraph(attributePaths = { "category", "postImages", "postImages.image" })
+    @EntityGraph(attributePaths = { "category", "medias" })
     @Query("""
             SELECT p
             FROM Post p
             JOIN p.category c
-            WHERE p.status = :status AND c.slug = :slug
+            WHERE p.status = 'PUBLISHED' AND c.slug = :slug
             """)
-    Slice<Post> findByStatusAndCategory_Slug(PostStatus status, String slug, Pageable pageable);
+    Slice<Post> findByCategory(@Param("slug") String slug, Pageable pageable);
 
     @Query("""
             SELECT new com.pyomin.cool.dto.PostSummaryDto(p.slug, p.title)
@@ -41,7 +42,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             """)
     List<PostSummaryDto> findPreviousPost(
             @Param("status") PostStatus status,
-            @Param("createdAt") LocalDateTime createdAt,
+            @Param("createdAt") OffsetDateTime createdAt,
             @Param("postId") Long postId,
             Pageable pageable);
 
@@ -54,7 +55,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             """)
     List<PostSummaryDto> findNextPost(
             @Param("status") PostStatus status,
-            @Param("createdAt") LocalDateTime createdAt,
+            @Param("createdAt") OffsetDateTime createdAt,
             @Param("postId") Long postId,
             Pageable pageable);
 
@@ -62,9 +63,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             SELECT p
             FROM Post p
             JOIN FETCH p.category c
-            WHERE p.slug = :slug AND p.status = :status
+            LEFT JOIN FETCH p.medias m
+            WHERE p.slug = :slug AND p.status = 'PUBLISHED'
             """)
-    Optional<Post> findBySlugAndStatus(@Param("slug") String slug, @Param("status") PostStatus status);
+    Optional<Post> findBySlug(@Param("slug") String slug);
 
     @Query("""
             SELECT p FROM Post p

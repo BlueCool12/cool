@@ -1,6 +1,6 @@
 package com.pyomin.cool.dto;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,7 +22,7 @@ public class CommentListDto {
     @JsonProperty("isDeleted")
     private final boolean deleted;
 
-    private final LocalDateTime createdAt;
+    private final OffsetDateTime createdAt;
     private final List<CommentListDto> children;
 
     public static CommentListDto from(Comment comment) {
