@@ -1,5 +1,7 @@
 package com.pyomin.cool.service;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 
 import com.pyomin.cool.domain.PageView;
@@ -28,14 +30,27 @@ public class PageViewServiceImpl implements PageViewService {
                 .referrer(dto.getReferrer())
                 .ipAddress(dto.getIpAddress())
                 .userAgent(dto.getUserAgent())
-                .sessionId(dto.getSessionId())
+                .clientId(safeUuid(dto.getClientId()))
+                .sessionId(safeUuid(dto.getSessionId()))
                 .deviceType(dto.getDeviceType())
                 .build();
 
-        pageViewRepository.save(pageView);        
+        pageViewRepository.save(pageView);
 
         if (dto.getSlug() != null && !dto.getSlug().isBlank()) {
             postRepository.incrementViewCountBySlug(dto.getSlug());
+        }
+    }
+
+    private UUID safeUuid(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return null;
+        }
+
+        try {
+            return UUID.fromString(value);
+        } catch (IllegalArgumentException e) {
+            return null;
         }
     }
 }
