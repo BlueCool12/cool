@@ -1,6 +1,6 @@
 package com.pyomin.cool.domain;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -51,6 +51,6 @@ public class PageView {
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
 }

@@ -1,6 +1,6 @@
 package com.pyomin.cool.repository;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,7 +41,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             """)
     List<PostSummaryDto> findPreviousPost(
             @Param("status") PostStatus status,
-            @Param("createdAt") LocalDateTime createdAt,
+            @Param("createdAt") OffsetDateTime createdAt,
             @Param("postId") Long postId,
             Pageable pageable);
 
@@ -54,7 +54,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             """)
     List<PostSummaryDto> findNextPost(
             @Param("status") PostStatus status,
-            @Param("createdAt") LocalDateTime createdAt,
+            @Param("createdAt") OffsetDateTime createdAt,
             @Param("postId") Long postId,
             Pageable pageable);
 

@@ -1,6 +1,5 @@
 package com.pyomin.cool.domain;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +18,7 @@ import lombok.Getter;
 @Entity
 @Getter
 @Table(name = "category")
-public class Category {
+public class Category extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +39,5 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     private List<Post> posts = new ArrayList<>();
-    
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;    
+
 }
