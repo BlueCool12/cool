@@ -30,6 +30,9 @@ public class Category extends BaseEntity {
     @Column(nullable = false, length = 20, unique = true)
     private String slug;
 
+    @Column(name = "sort_order", nullable = false)
+    private Integer sortOrder;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Category parent;
