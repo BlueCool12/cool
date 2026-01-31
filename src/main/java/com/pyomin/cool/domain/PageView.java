@@ -1,6 +1,7 @@
 package com.pyomin.cool.domain;
 
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -46,8 +47,11 @@ public class PageView {
     @Column(name = "device_type", length = 20)
     private String deviceType;
 
-    @Column(name = "session_id", length = 64)
-    private String sessionId;
+    @Column(name = "client_id")
+    private UUID clientId;
+
+    @Column(name = "session_id")
+    private UUID sessionId;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

@@ -11,6 +11,7 @@ public class PageViewLogDto {
     private String referrer;
     private String ipAddress;
     private String userAgent;
+    private String clientId;
     private String sessionId;
     private String deviceType;
 
@@ -20,6 +21,7 @@ public class PageViewLogDto {
             String referrer,
             String ipAddress,
             String userAgent,
+            String clientId,
             String sessionId) {
         return PageViewLogDto.builder()
                 .url(url)
@@ -27,7 +29,8 @@ public class PageViewLogDto {
                 .referrer(referrer != null ? referrer.trim() : "")
                 .ipAddress(ipAddress != null ? ipAddress : "")
                 .userAgent(userAgent != null ? userAgent : "")
-                .sessionId(sessionId != null ? sessionId : "")
+                .clientId(clientId != null ? clientId : "")
+                .sessionId(sessionId)
                 .deviceType(resolveDeviceType(userAgent))
                 .build();
     }

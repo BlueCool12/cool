@@ -42,11 +42,13 @@ public class PageViewController {
         String ipAddress = getClientIp(request);
         String userAgent = request.getHeader("User-Agent");
 
-        String sessionId = Optional.ofNullable(request.getHeader("X-Session-Id"))
-                .orElseGet(() -> getSessionIdFromCookie((request)));
+        String clientId = Optional.ofNullable(request.getHeader("X-Client-Id"))
+                .orElseGet(() -> getClientIdFromCookie((request)));
+
+        String sessionId = Optional.ofNullable(request.getHeader("X-Session-Id")).orElse(null);
 
         PageViewLogDto dto = PageViewLogDto.of(body.getUrl(), body.getSlug(), referrer, ipAddress, userAgent,
-                sessionId);
+                clientId, sessionId);
         pageViewService.logPageView(dto);
     }
 
@@ -55,11 +57,11 @@ public class PageViewController {
         return (ip != null) ? ip.split(",")[0] : request.getRemoteAddr();
     }
 
-    private String getSessionIdFromCookie(HttpServletRequest request) {
+    private String getClientIdFromCookie(HttpServletRequest request) {
         if (request.getCookies() == null)
             return null;
         for (Cookie cookie : request.getCookies()) {
-            if ("bluecool_sid".equals(cookie.getName()))
+            if ("bluecool_cid".equals(cookie.getName()))
                 return cookie.getValue();
         }
         return null;
