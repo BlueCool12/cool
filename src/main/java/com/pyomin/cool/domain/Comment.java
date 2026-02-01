@@ -35,7 +35,10 @@ public class Comment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
+    @Column(name = "admin_id")
+    private Long adminId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
@@ -58,7 +61,7 @@ public class Comment extends BaseEntity {
 
     @Column(nullable = false)
     private boolean isDeleted = false;
-        
+
     public void delete() {
         this.isDeleted = true;
     }
@@ -66,6 +69,6 @@ public class Comment extends BaseEntity {
     public void update(CommentUpdateDto dto) {
         this.nickname = dto.getNickname();
         this.password = dto.getPassword();
-        this.content = dto.getContent();        
+        this.content = dto.getContent();
     }
 }
