@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pyomin.cool.dto.CommentUpdateDto;
+import com.pyomin.cool.domain.RateLimit;
 import com.pyomin.cool.dto.CommentCreateDto;
 import com.pyomin.cool.dto.request.CommentCreateRequest;
 import com.pyomin.cool.dto.request.CommentDeleteRequest;
@@ -33,6 +34,7 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping
+    @RateLimit(capacity = 5, seconds = 60)
     public void createComment(@RequestBody @Valid CommentCreateRequest request) {
         commentService.createComment(CommentCreateDto.from(request));
     }
