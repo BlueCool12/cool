@@ -36,6 +36,8 @@ dependencies {
 	// redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+	implementation 'com.github.vladimir-bukhtoyarov:bucket4j-core:7.6.0'
+
 	runtimeOnly 'org.postgresql:postgresql'
 	
 	compileOnly 'org.projectlombok:lombok'
