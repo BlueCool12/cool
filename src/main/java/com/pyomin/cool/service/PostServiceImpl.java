@@ -47,7 +47,7 @@ public class PostServiceImpl implements PostService {
     private static String summarize(String content) {
         String plainText = content.replaceAll("<[^>]*>", "");
         plainText = plainText.replaceAll("&[^;]+;", " ");
-        return plainText.length() > 250 ? plainText.substring(0, 250) : plainText;
+        return plainText.length() > 300 ? plainText.substring(0, 300) : plainText;
     }
 
     @Override
