@@ -6,7 +6,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import com.pyomin.cool.domain.RateLimit;
 
-import io.github.bucket4j.Bucket;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -32,9 +31,7 @@ public class RateLimitInterceptor implements HandlerInterceptor {
             return true;
 
         String ip = getClientIp(request);
-        Bucket bucket = rateLimitProvider.resolveBucket(ip, rateLimit.capacity(), rateLimit.seconds());
-
-        if (bucket.tryConsume(1)) {
+        if (rateLimitProvider.tryConsume(ip, rateLimit.capacity(), rateLimit.seconds())) {
             return true;
         }
 
@@ -44,7 +41,7 @@ public class RateLimitInterceptor implements HandlerInterceptor {
     }
 
     private String getClientIp(HttpServletRequest request) {
-        String ip = request.getHeader("X-Forwarded-For");        
+        String ip = request.getHeader("X-Forwarded-For");
 
         if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
