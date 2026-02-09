@@ -8,6 +8,8 @@ import com.pyomin.cool.dto.CommentUpdateDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,6 +32,7 @@ public class Comment extends BaseEntity {
         this.nickname = nickname;
         this.password = password;
         this.content = content;
+        this.status = CommentStatus.PUBLISHED;
     }
 
     @Id
@@ -59,11 +62,15 @@ public class Comment extends BaseEntity {
     @Column(nullable = false, length = 255)
     private String content;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private CommentStatus status;
+
     @Column(nullable = false)
     private boolean isDeleted = false;
 
     public void delete() {
-        this.isDeleted = true;
+        this.status = CommentStatus.DELETED;
     }
 
     public void update(CommentUpdateDto dto) {
