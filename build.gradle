@@ -36,7 +36,12 @@ dependencies {
 	// redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+	// bucket4j
 	implementation 'com.github.vladimir-bukhtoyarov:bucket4j-core:7.6.0'
+
+	// prometheus
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'io.micrometer:micrometer-registry-prometheus'
 
 	runtimeOnly 'org.postgresql:postgresql'
 	
