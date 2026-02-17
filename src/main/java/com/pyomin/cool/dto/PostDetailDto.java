@@ -14,6 +14,7 @@ public class PostDetailDto {
     private final String content;
     private final CategoryDetailDto categoryDetailDto;
     private final String createdAt;
+    private final String publishedAt;
 
     private final PostSummaryDto previousPost;
     private final PostSummaryDto nextPost;
@@ -27,6 +28,7 @@ public class PostDetailDto {
                 post.getContent(),
                 categoryDetailDto,
                 post.getCreatedAt().toString(),
+                post.getPublishedAt().toString(),
                 prev,
                 next);
     }

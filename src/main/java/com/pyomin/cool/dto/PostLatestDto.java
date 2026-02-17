@@ -13,12 +13,14 @@ public class PostLatestDto {
     private final String title;
     private final String slug;
     private final String createdAt;
+    private final String publishedAt;
 
     public static PostLatestDto from(Post post) {
         return new PostLatestDto(
                 post.getId(),
                 post.getTitle(),
                 post.getSlug(),
-                post.getCreatedAt().toString());
+                post.getCreatedAt().toString(),
+                post.getPublishedAt().toString());
     }
 }

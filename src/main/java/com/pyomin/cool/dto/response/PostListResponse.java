@@ -17,6 +17,7 @@ public class PostListResponse {
     private final String coverPath;
     private final String createdAt;
     private final String updatedAt;
+    private final String publishedAt;
 
     public static PostListResponse from(PostListDto dto) {
         return new PostListResponse(
@@ -27,6 +28,7 @@ public class PostListResponse {
                 dto.getSlug(),
                 dto.getCoverPath(),
                 dto.getCreatedAt(),
-                dto.getUpdatedAt());
+                dto.getUpdatedAt(),
+                dto.getPublishedAt());
     }
 }

@@ -1,5 +1,6 @@
 package com.pyomin.cool.domain;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,6 +59,9 @@ public class Post extends BaseEntity {
     @Builder.Default
     @Column(name = "view_count", nullable = false)
     private Integer viewCount = 0;
+
+    @Column(name = "published_at", nullable = true)
+    private OffsetDateTime publishedAt;
 
     @Builder.Default
     @OneToMany(fetch = FetchType.LAZY)
