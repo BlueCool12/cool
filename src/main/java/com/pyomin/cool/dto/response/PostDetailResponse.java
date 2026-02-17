@@ -14,6 +14,7 @@ public class PostDetailResponse {
     private final String content;
     private final CategoryDetailResponse category;
     private final String createdAt;
+    private final String publishedAt;
 
     private final PostSummaryResponse previousPost;
     private final PostSummaryResponse nextPost;
@@ -26,6 +27,7 @@ public class PostDetailResponse {
                 dto.getContent(),
                 CategoryDetailResponse.from(dto.getCategoryDetailDto()),
                 dto.getCreatedAt(),
+                dto.getPublishedAt(),
                 dto.getPreviousPost() != null ? PostSummaryResponse.from(dto.getPreviousPost()) : null,
                 dto.getNextPost() != null ? PostSummaryResponse.from(dto.getNextPost()) : null);
     }

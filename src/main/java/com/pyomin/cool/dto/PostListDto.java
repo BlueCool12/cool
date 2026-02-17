@@ -16,6 +16,7 @@ public class PostListDto {
     private final String coverPath;
     private final String createdAt;
     private final String updatedAt;
+    private final String publishedAt;
 
     public static PostListDto of(Post post, String summary) {
 
@@ -32,6 +33,7 @@ public class PostListDto {
                 post.getSlug(),
                 fullCoverPath,
                 post.getCreatedAt().toString(),
-                post.getUpdatedAt().toString());
+                post.getUpdatedAt().toString(),
+                post.getPublishedAt().toString());
     }
 }

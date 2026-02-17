@@ -13,12 +13,14 @@ public class PostLatestResponse {
     private final String title;
     private final String slug;
     private final String createdAt;
+    private final String publishedAt;
 
     public static PostLatestResponse from(PostLatestDto post) {
         return new PostLatestResponse(
                 post.getId(),
                 post.getTitle(),
                 post.getSlug(),
-                post.getCreatedAt());
+                post.getCreatedAt(),
+                post.getPublishedAt());
     }
 }
