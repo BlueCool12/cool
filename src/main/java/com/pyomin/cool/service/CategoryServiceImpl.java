@@ -31,7 +31,8 @@ public class CategoryServiceImpl implements CategoryService {
         for (CategoryListDto category : categories) {
             nodes.put(
                     category.id(),
-                    new CategoryListResponse(category.name(), category.slug(), new ArrayList<>()));
+                    new CategoryListResponse(category.name(), category.slug(), category.postCount(),
+                            new ArrayList<>()));
         }
 
         List<CategoryListResponse> roots = new ArrayList<>();
