@@ -7,11 +7,13 @@ import com.pyomin.cool.domain.Category;
 public record CategoryListResponse(
         String name,
         String slug,
+        Long postCount,
         List<CategoryListResponse> children) {
     public static CategoryListResponse from(Category category) {
         return new CategoryListResponse(
                 category.getName(),
                 category.getSlug(),
+                (long) category.getPosts().size(),
                 category.getChildren().stream()
                         .map(CategoryListResponse::from)
                         .toList());

@@ -14,10 +14,15 @@ import com.pyomin.cool.dto.SitemapDto;
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
     @Query("""
-            SELECT new com.pyomin.cool.dto.CategoryListDto(c.id, c.name, c.slug, p.id)
-            FROM Category c 
+            SELECT new com.pyomin.cool.dto.CategoryListDto(
+                c.id, c.name, c.slug, p.id,
+                COUNT(posts.id)
+            )
+            FROM Category c
             LEFT JOIN c.parent p
-            ORDER BY 
+            LEFT JOIN c.posts posts ON posts.status = 'PUBLISHED'
+            GROUP BY c.id, c.name, c.slug, p.id, c.sortOrder
+            ORDER BY
                 p.id ASC NULLS FIRST,
                 c.sortOrder ASC,
                 c.id ASC
