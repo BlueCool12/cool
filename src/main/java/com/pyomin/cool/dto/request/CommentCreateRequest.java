@@ -3,13 +3,17 @@ package com.pyomin.cool.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class CommentCreateRequest {
 
     @NotNull(message = "postId는 필수입니다.")
+    @Positive(message = "postId는 1 이상이어야 합니다.")
     private Long postId;
 
     private Long parentId;
