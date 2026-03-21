@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pyomin.cool.dto.PageViewLogDto;
 import com.pyomin.cool.dto.request.PageViewLogRequest;
 import com.pyomin.cool.service.PageViewService;
+import com.pyomin.cool.util.RequestUtil;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,7 +40,7 @@ public class PageViewController {
         }
 
         String referrer = Optional.ofNullable(request.getHeader("X-Referrer")).orElse("");
-        String ipAddress = getClientIp(request);
+        String ipAddress = RequestUtil.getClientIp(request);
         String userAgent = request.getHeader("User-Agent");
 
         String clientId = Optional.ofNullable(request.getHeader("X-Client-Id"))
@@ -50,11 +51,6 @@ public class PageViewController {
         PageViewLogDto dto = PageViewLogDto.of(body.getUrl(), body.getSlug(), referrer, ipAddress, userAgent,
                 clientId, sessionId);
         pageViewService.logPageView(dto);
-    }
-
-    private String getClientIp(HttpServletRequest request) {
-        String ip = request.getHeader("X-Forwarded-For");
-        return (ip != null) ? ip.split(",")[0] : request.getRemoteAddr();
     }
 
     private String getClientIdFromCookie(HttpServletRequest request) {
