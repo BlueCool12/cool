@@ -63,12 +63,12 @@ public class PostServiceImpl implements PostService {
     }
 
     private Optional<PostSummaryDto> findPrev(Post post) {
-        return postRepository.findPreviousPost(PostStatus.PUBLISHED, post.getCreatedAt(), post.getId(), LIMIT_ONE)
+        return postRepository.findPreviousPost(PostStatus.PUBLISHED, post.getPublishedAt(), post.getId(), LIMIT_ONE)
                 .stream().findFirst();
     }
 
     private Optional<PostSummaryDto> findNext(Post post) {
-        return postRepository.findNextPost(PostStatus.PUBLISHED, post.getCreatedAt(), post.getId(), LIMIT_ONE)
+        return postRepository.findNextPost(PostStatus.PUBLISHED, post.getPublishedAt(), post.getId(), LIMIT_ONE)
                 .stream().findFirst();
     }
 

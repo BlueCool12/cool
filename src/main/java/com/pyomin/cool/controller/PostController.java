@@ -46,7 +46,7 @@ public class PostController {
     @GetMapping
     public SliceResponse<PostListResponse> list(
             @RequestParam(name = "category", required = false) String category,
-            @PageableDefault(page = 0, size = 10, sort = { "createdAt",
+            @PageableDefault(page = 0, size = 10, sort = { "publishedAt",
                     "id" }, direction = Sort.Direction.DESC) Pageable pageable) {
         Slice<PostListResponse> slice = postService.getAllPosts(category, pageable)
                 .map(PostListResponse::from);
