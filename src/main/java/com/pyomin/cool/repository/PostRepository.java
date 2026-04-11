@@ -37,12 +37,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             SELECT new com.pyomin.cool.dto.PostSummaryDto(p.slug, p.title)
             FROM Post p
             WHERE p.status = :status
-            AND (p.createdAt < :createdAt OR (p.createdAt = :createdAt AND p.id < :postId))
-            ORDER BY p.createdAt DESC, p.id DESC
+            AND (p.publishedAt < :publishedAt OR (p.publishedAt = :publishedAt AND p.id < :postId))
+            ORDER BY p.publishedAt DESC, p.id DESC
             """)
     List<PostSummaryDto> findPreviousPost(
             @Param("status") PostStatus status,
-            @Param("createdAt") OffsetDateTime createdAt,
+            @Param("publishedAt") OffsetDateTime publishedAt,
             @Param("postId") Long postId,
             Pageable pageable);
 
@@ -50,12 +50,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             SELECT new com.pyomin.cool.dto.PostSummaryDto(p.slug, p.title)
             FROM Post p
             WHERE p.status = :status
-            AND (p.createdAt > :createdAt OR (p.createdAt = :createdAt AND p.id > :postId))
-            ORDER BY p.createdAt ASC, p.id ASC
+            AND (p.publishedAt > :publishedAt OR (p.publishedAt = :publishedAt AND p.id > :postId))
+            ORDER BY p.publishedAt ASC, p.id ASC
             """)
     List<PostSummaryDto> findNextPost(
             @Param("status") PostStatus status,
-            @Param("createdAt") OffsetDateTime createdAt,
+            @Param("publishedAt") OffsetDateTime publishedAt,
             @Param("postId") Long postId,
             Pageable pageable);
 
@@ -71,15 +71,15 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("""
             SELECT p FROM Post p
             WHERE p.status = :status
-            ORDER BY p.createdAt DESC, p.id DESC
+            ORDER BY p.publishedAt DESC, p.id DESC
             """)
     List<Post> findLatestPosts(@Param("status") PostStatus status, Pageable pageable);
 
     @Query("""
-            SELECT new com.pyomin.cool.dto.SitemapDto(p.slug, COALESCE(p.updatedAt, p.createdAt))
+            SELECT new com.pyomin.cool.dto.SitemapDto(p.slug, COALESCE(p.updatedAt, p.publishedAt))
             FROM Post p
             WHERE p.status = :status
-            ORDER BY COALESCE(p.updatedAt, p.createdAt) DESC, p.id DESC
+            ORDER BY COALESCE(p.updatedAt, p.publishedAt) DESC, p.id DESC
             """)
     List<SitemapDto<String>> findAllForSitemap(PostStatus status);
 
