@@ -87,4 +87,11 @@ public class PostServiceImpl implements PostService {
     public List<SitemapDto<String>> getPostSitemap() {
         return postRepository.findAllForSitemap(PostStatus.PUBLISHED);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Slice<PostListDto> searchPosts(String keyword, Pageable pageable) {
+        Slice<Post> posts = postRepository.searchByKeyword(keyword, pageable);
+        return posts.map(post -> PostListDto.of(post, summarize(post.getContent())));
+    }
 }

@@ -29,4 +29,15 @@ public interface PostService {
     List<PostLatestDto> getLatestPosts();    
 
     List<SitemapDto<String>> getPostSitemap();
+
+    /**
+     * 키워드로 게시글을 검색합니다.
+     *
+     * <p>제목 또는 내용에 키워드가 포함된 게시글을 조회합니다.</p>
+     *
+     * @param keyword  검색 키워드
+     * @param pageable 페이지/정렬 정보(0-based)
+     * @return         검색 결과 슬라이스 (다음 페이지 존재 여부 포함)
+     */
+    Slice<PostListDto> searchPosts(String keyword, Pageable pageable);
 }
