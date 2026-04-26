@@ -92,9 +92,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("""
             SELECT p
             FROM Post p
+            LEFT JOIN p.category c
             WHERE p.status = 'PUBLISHED'
-              AND (LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
-                OR LOWER(p.content) LIKE LOWER(CONCAT('%', :keyword, '%')))
+              AND (:slug IS NULL OR c.slug = :slug)
+              AND (LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')) ESCAPE '\\'
+                OR LOWER(p.content) LIKE LOWER(CONCAT('%', :keyword, '%')) ESCAPE '\\')
             """)
-    Slice<Post> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
+    Slice<Post> searchByKeywordAndCategory(@Param("keyword") String keyword, @Param("slug") String slug, Pageable pageable);
 }

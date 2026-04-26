@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -90,8 +91,19 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional(readOnly = true)
-    public Slice<PostListDto> searchPosts(String keyword, Pageable pageable) {
-        Slice<Post> posts = postRepository.searchByKeyword(keyword, pageable);
+    public Slice<PostListDto> searchPosts(String keyword, String category, Pageable pageable) {
+        if (!StringUtils.hasText(keyword)) {
+            return Page.empty(pageable);
+        }
+
+        String escapedKeyword = keyword
+                .replace("\\", "\\\\")
+                .replace("%", "\\%")
+                .replace("_", "\\_");
+
+        String categorySlug = StringUtils.hasText(category) ? category : null;
+
+        Slice<Post> posts = postRepository.searchByKeywordAndCategory(escapedKeyword, categorySlug, pageable);
         return posts.map(post -> PostListDto.of(post, summarize(post.getContent())));
     }
 }
