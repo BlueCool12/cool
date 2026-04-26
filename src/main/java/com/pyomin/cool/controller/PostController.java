@@ -71,4 +71,27 @@ public class PostController {
     public SitemapResponse<SitemapDto<String>> sitemap() {
         return SitemapResponse.from(postService.getPostSitemap());
     }
+
+    /**
+     * 키워드로 게시글을 검색합니다.
+     * <p>제목 또는 내용에 키워드가 포함된 게시글을 반환합니다.</p>
+     *
+     * <pre>
+     * 예) /posts/search?keyword=spring&size=10&sort=publishedAt,desc&sort=id,desc
+     * </pre>
+     *
+     * @param keyword  검색 키워드
+     * @param pageable 페이지/정렬 정보(0-base) 기본: size=10, sort=publishedAt desc, id desc
+     * @return         검색 결과 슬라이스 응답 (다음 페이지 존재 여부 포함)
+     */
+    @GetMapping("/search")
+    public SliceResponse<PostListResponse> search(
+            @RequestParam(name = "keyword") String keyword,
+            @PageableDefault(page = 0, size = 10, sort = { "publishedAt",
+                    "id" }, direction = Sort.Direction.DESC) Pageable pageable) {
+        Slice<PostListResponse> slice = postService.searchPosts(keyword, pageable)
+                .map(PostListResponse::from);
+
+        return SliceResponse.from(slice);
+    }
 }
