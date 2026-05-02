@@ -1,0 +1,152 @@
+name: Deploy to Raspberry Pi
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-pi
+  cancel-in-progress: false
+
+env:
+  COMPOSE_SERVICE: cool
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Build jar
+        run: |
+          chmod +x gradlew
+          ./gradlew clean bootJar -x test
+
+      - name: Locate built jar
+        id: jar
+        run: |
+          JAR_PATH=$(ls build/libs/cool-*.jar | grep -v plain | head -n1)
+          if [ -z "$JAR_PATH" ]; then
+            echo "::error::No bootJar artifact found under build/libs"
+            exit 1
+          fi
+          echo "path=$JAR_PATH" >> "$GITHUB_OUTPUT"
+
+      - name: Configure SSH
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+          cat > ~/.ssh/config <<'EOF'
+          Host *
+              StrictHostKeyChecking yes
+              UserKnownHostsFile ~/.ssh/known_hosts
+              IdentityFile ~/.ssh/id_ed25519
+              IdentitiesOnly yes
+              BatchMode yes
+              ServerAliveInterval 30
+              ServerAliveCountMax 3
+          EOF
+          chmod 600 ~/.ssh/config
+
+      - name: Upload jar to staging path
+        id: upload
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          REMOTE_JAR_PATH: ${{ secrets.REMOTE_JAR_PATH }}
+          JAR_PATH: ${{ steps.jar.outputs.path }}
+        run: |
+          scp -P "$SSH_PORT" "$JAR_PATH" "$SSH_USER@$SSH_HOST:${REMOTE_JAR_PATH}.new"
+
+      - name: Activate new jar (atomic swap with backup)
+        id: activate
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          REMOTE_JAR_PATH: ${{ secrets.REMOTE_JAR_PATH }}
+        run: |
+          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "
+            if [ -f '${REMOTE_JAR_PATH}' ]; then
+              cp '${REMOTE_JAR_PATH}' '${REMOTE_JAR_PATH}.prev'
+            fi
+            mv '${REMOTE_JAR_PATH}.new' '${REMOTE_JAR_PATH}'
+          "
+
+      - name: Recreate container
+        id: recreate
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          REMOTE_COMPOSE_DIR: ${{ secrets.REMOTE_COMPOSE_DIR }}
+        run: |
+          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" \
+            "cd '${REMOTE_COMPOSE_DIR}' && docker compose up -d --force-recreate ${COMPOSE_SERVICE}"
+
+      - name: Health check
+        id: health
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          APP_HEALTH_URL: ${{ secrets.APP_HEALTH_URL }}
+        run: |
+          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "
+            for i in \$(seq 1 60); do
+              if curl -sf '${APP_HEALTH_URL}' | grep -q '\"status\":\"UP\"'; then
+                echo \"Healthy after \$((i * 5))s\"
+                exit 0
+              fi
+              sleep 5
+            done
+            echo 'Health check failed after 300s'
+            exit 1
+          "
+
+      - name: Rollback on failure
+        if: |
+          failure() && (
+            steps.activate.outcome == 'failure' ||
+            steps.recreate.outcome == 'failure' ||
+            steps.health.outcome == 'failure'
+          )
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          REMOTE_JAR_PATH: ${{ secrets.REMOTE_JAR_PATH }}
+          REMOTE_COMPOSE_DIR: ${{ secrets.REMOTE_COMPOSE_DIR }}
+        run: |
+          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "
+            if [ -f '${REMOTE_JAR_PATH}.prev' ]; then
+              echo 'Rolling back to previous jar'
+              mv '${REMOTE_JAR_PATH}.prev' '${REMOTE_JAR_PATH}'
+              cd '${REMOTE_COMPOSE_DIR}' && docker compose up -d --force-recreate ${COMPOSE_SERVICE}
+            else
+              echo 'No backup found - manual recovery required'
+              exit 1
+            fi
+          "
+
+      - name: Cleanup SSH key
+        if: always()
+        run: rm -f ~/.ssh/id_ed25519

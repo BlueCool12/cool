@@ -87,4 +87,16 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Post p SET p.viewCount = p.viewCount + 1 WHERE p.slug = :slug")
     void incrementViewCountBySlug(@Param("slug") String slug);
+
+    @EntityGraph(attributePaths = { "category", "medias" })
+    @Query("""
+            SELECT p
+            FROM Post p
+            LEFT JOIN p.category c
+            WHERE p.status = 'PUBLISHED'
+              AND (:slug IS NULL OR c.slug = :slug)
+              AND (LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')) ESCAPE '\\'
+                OR LOWER(p.content) LIKE LOWER(CONCAT('%', :keyword, '%')) ESCAPE '\\')
+            """)
+    Slice<Post> searchByKeywordAndCategory(@Param("keyword") String keyword, @Param("slug") String slug, Pageable pageable);
 }
