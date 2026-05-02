@@ -33,23 +33,6 @@ public class PostController {
 
     private final PostService postService;
 
-    /**
-     * 게시글 목록을 조회합니다.
-     * <p>
-     * category가 비어있으면 전체, 값이 있으면 해당 카테고리(slug) 글만 반환합니다.
-     * </p>
-     * <p>
-     * 정렬은 요청의 {@code sort} 파라미터를 따르며 미지정 시 {@code createdAt desc, id desc}가 기본값입니다.
-     * </p>
-     * 
-     * <pre>
-     * 예) /posts?category=java&size=10&sort=createdAt,desc&sort=id,desc
-     * </pre>
-     * 
-     * @param category 카테고리 slug (null/blank면 필터 미적용)
-     * @param pageable 페이지/정렬 정보(0-base) 기본: size=10, sort=createdAt desc, id desc
-     * @return 게시글 목록 슬라이스 응답 (다음 페이지 존재 여부 포함)
-     */
     @GetMapping
     public SliceResponse<PostListResponse> list(
             @RequestParam(name = "category", required = false) String category,
@@ -79,20 +62,6 @@ public class PostController {
         return SitemapResponse.from(postService.getPostSitemap());
     }
 
-    /**
-     * 키워드로 게시글을 검색합니다.
-     * <p>
-     * 제목 또는 내용에 키워드가 포함된 게시글을 반환합니다.
-     * </p>
-     *
-     * <pre>
-     * 예) /posts/search?keyword=spring&size=10&sort=publishedAt,desc&sort=id,desc
-     * </pre>
-     *
-     * @param keyword  검색 키워드
-     * @param pageable 페이지/정렬 정보(0-base) 기본: size=10, sort=publishedAt desc, id desc
-     * @return 검색 결과 슬라이스 응답 (다음 페이지 존재 여부 포함)
-     */
     @GetMapping("/search")
     public SliceResponse<PostListResponse> search(
             @Valid PostSearchRequest request,
