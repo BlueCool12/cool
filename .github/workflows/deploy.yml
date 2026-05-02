@@ -65,7 +65,8 @@ jobs:
           EOF
           chmod 600 ~/.ssh/config
 
-      - name: Upload jar (atomic swap with backup)
+      - name: Upload jar to staging path
+        id: upload
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_PORT: ${{ secrets.SSH_PORT }}
@@ -74,6 +75,15 @@ jobs:
           JAR_PATH: ${{ steps.jar.outputs.path }}
         run: |
           scp -P "$SSH_PORT" "$JAR_PATH" "$SSH_USER@$SSH_HOST:${REMOTE_JAR_PATH}.new"
+
+      - name: Activate new jar (atomic swap with backup)
+        id: activate
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          REMOTE_JAR_PATH: ${{ secrets.REMOTE_JAR_PATH }}
+        run: |
           ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "
             if [ -f '${REMOTE_JAR_PATH}' ]; then
               cp '${REMOTE_JAR_PATH}' '${REMOTE_JAR_PATH}.prev'
@@ -82,6 +92,7 @@ jobs:
           "
 
       - name: Recreate container
+        id: recreate
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_PORT: ${{ secrets.SSH_PORT }}
@@ -112,7 +123,12 @@ jobs:
           "
 
       - name: Rollback on failure
-        if: failure()
+        if: |
+          failure() && (
+            steps.activate.outcome == 'failure' ||
+            steps.recreate.outcome == 'failure' ||
+            steps.health.outcome == 'failure'
+          )
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_PORT: ${{ secrets.SSH_PORT }}
