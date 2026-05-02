@@ -108,17 +108,28 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_PORT: ${{ secrets.SSH_PORT }}
           SSH_USER: ${{ secrets.SSH_USER }}
-          APP_HEALTH_URL: ${{ secrets.APP_HEALTH_URL }}
+          REMOTE_COMPOSE_DIR: ${{ secrets.REMOTE_COMPOSE_DIR }}
         run: |
           ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "
+            cd '${REMOTE_COMPOSE_DIR}'
+            CID=\$(docker compose ps -q ${COMPOSE_SERVICE})
+            if [ -z \"\$CID\" ]; then
+              echo 'Container not found'
+              exit 1
+            fi
             for i in \$(seq 1 60); do
-              if curl -sf '${APP_HEALTH_URL}' | grep -q '\"status\":\"UP\"'; then
+              STATUS=\$(docker inspect --format='{{.State.Health.Status}}' \"\$CID\" 2>/dev/null)
+              if [ \"\$STATUS\" = 'healthy' ]; then
                 echo \"Healthy after \$((i * 5))s\"
                 exit 0
               fi
+              if [ \"\$STATUS\" = 'unhealthy' ]; then
+                echo 'Container reported unhealthy'
+                exit 1
+              fi
               sleep 5
             done
-            echo 'Health check failed after 300s'
+            echo 'Health check timed out after 300s (still in starting state)'
             exit 1
           "
 
